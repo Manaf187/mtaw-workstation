@@ -1,0 +1,3 @@
+# Bootstrap placeholder only.
+# No guest operating-system package set is selected or installed at this stage.
+# Future package additions require review against the locked baseline.

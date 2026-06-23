@@ -1,0 +1,10 @@
+release:
+  status: planned
+  version: not_set
+  source_commit: not_set
+  ova: not_exported
+  integrity_digest: not_generated
+  publisher_authentication: not_implemented
+  clean_vm_reproducibility: not_tested
+  ova_reimport: not_tested
+  sanitization: not_validated

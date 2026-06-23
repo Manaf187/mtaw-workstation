@@ -1,0 +1,58 @@
+# Local worktrees and editor state
+.worktrees/
+worktrees/
+.vscode/
+.idea/
+
+# Environment files, credentials, and private material
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+*.token
+*.secret
+credentials/
+secrets/
+private/
+cookies/
+browser-profiles/
+
+# Case data, evidence, and local logs
+cases/
+evidence/
+collection-logs/
+*.log
+
+# Virtual-machine and installer artifacts
+*.ova
+*.ovf
+*.vdi
+*.vmdk
+*.vhd
+*.vhdx
+*.iso
+*.qcow2
+*.sav
+*.vbox-prev
+Snapshots/
+
+# Captures and database dumps
+*.pcap
+*.pcapng
+*.cap
+*.sqlite
+*.sqlite3
+*.db
+*.sql
+
+# Build and notebook output
+dist/
+out/
+build/output/
+__pycache__/
+.ipynb_checkpoints/

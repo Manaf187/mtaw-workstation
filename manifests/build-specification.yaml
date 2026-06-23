@@ -1,0 +1,87 @@
+project:
+  name: Modern Threat Analyst Workstation
+  abbreviation: MTAW
+  author: Manaf M. Mohamed
+  purpose: Reproducible security-conscious Ubuntu analyst workstation
+  repository_role: authoritative_source_of_truth
+  version: 0.1.0-dev
+  development_status: unvalidated_development_baseline
+
+host_baseline:
+  operating_system: Windows 11 Pro 64-bit
+  firmware: UEFI
+  secure_boot: required
+  tpm: "2.0"
+  defender: required
+  firewall: required
+  bitlocker: required
+
+hypervisor_baseline:
+  product: Oracle VirtualBox
+  version: "7.2"
+  package: base_package
+  extension_pack_required: false
+
+vm_hardware_profile:
+  guest_os: Ubuntu Desktop 24.04.4 LTS amd64
+  virtual_cpus: 6
+  memory_gib: 12
+  system_disk:
+    format: VDI
+    capacity_gib: 120
+    allocation: dynamically_allocated
+  case_evidence_disk:
+    format: VDI
+    capacity_gib: 250
+    separate_from_system_disk: true
+    encryption: planned
+
+network_defaults:
+  mode: NAT-only
+  bridged_networking: disabled_unless_specifically_approved
+  port_forwarding: disabled
+
+integration_feature_defaults:
+  shared_clipboard: disabled
+  drag_and_drop: disabled
+  shared_folders: disabled
+  usb_passthrough: disabled
+  host_drive_mapping: disabled
+
+analyst_environment:
+  python: "3.12"
+  python_virtual_environments: per_project
+  jupyterlab: "4.x"
+  primary_browser: Firefox
+  compatibility_browser: Chromium
+  timestamps: UTC
+  naming: ISO_8601_compatible
+  case_evidence_storage: separate_encrypted_planned
+  backups: encrypted_restic_planned
+
+credential_exclusions:
+  reusable_public_default_password: prohibited
+  credentials: prohibited
+  tokens: prohibited
+  api_keys: prohibited
+  cookies: prohibited
+  private_certificates: prohibited
+  case_data: prohibited
+
+implementation_status:
+  repository_foundation: implemented
+  guest_installer: not_implemented
+  workstation_package_installation: not_implemented
+  virtualbox_automation: not_implemented
+  appliance_build: not_implemented
+  ova_export: not_implemented
+  release_publishing: not_implemented
+  signing: not_implemented
+
+validation_status:
+  repository_static_checks: planned
+  clean_vm_reproducibility: not_tested
+  ova_reimport: not_tested
+  host_controls: not_validated
+  workstation_functional_validation: not_validated
+  appliance_sanitization: not_validated
