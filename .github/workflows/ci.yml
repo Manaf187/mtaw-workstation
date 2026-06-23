@@ -1,0 +1,69 @@
+name: Repository quality
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - bootstrap/**
+
+permissions:
+  contents: read
+
+jobs:
+  static-checks:
+    name: Static repository checks
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install disposable-runner static-analysis tools
+        run: |
+          set -Eeuo pipefail
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends shellcheck yamllint
+          npm install --global markdownlint-cli2@0.18.1
+          export GOBIN="$HOME/.local/bin"
+          mkdir --parents "$GOBIN"
+          go install github.com/gitleaks/gitleaks/v8@v8.30.0
+          printf '%s\n' "$GOBIN" >> "$GITHUB_PATH"
+
+      - name: Validate repository layout
+        run: bash tests/test-repository-layout.sh
+
+      - name: Check Bash syntax
+        run: bash tests/test-shell-syntax.sh
+
+      - name: Run ShellCheck
+        run: find guest tests -type f -name '*.sh' -print0 | xargs --null shellcheck --external-sources
+
+      - name: Validate YAML
+        run: yamllint .
+
+      - name: Validate Markdown
+        run: markdownlint-cli2 "**/*.md" "#.git/**"
+
+      - name: Scan for potential secrets
+        run: gitleaks detect --source . --no-git --redact --exit-code 1
+
+      - name: Reject prohibited artifacts and large tracked files
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          max_bytes=10485760
+          violations=0
+          while IFS= read -r -d '' path; do
+            case "${path,,}" in
+              *.ova|*.ovf|*.vdi|*.vmdk|*.vhd|*.vhdx|*.iso|*.qcow2|*.sav|*.pcap|*.pcapng|*.cap|*.sqlite|*.sqlite3|*.db|*.sql)
+                printf 'Prohibited tracked artifact: %s\n' "$path" >&2
+                violations=1
+                ;;
+            esac
+            size="$(git cat-file -s ":$path")"
+            if (( size > max_bytes )); then
+              printf 'Tracked file exceeds %s bytes: %s\n' "$max_bytes" "$path" >&2
+              violations=1
+            fi
+          done < <(git ls-files -z)
+          exit "$violations"

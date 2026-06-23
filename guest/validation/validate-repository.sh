@@ -75,10 +75,11 @@ scan_secret_patterns() {
   local matches
   local scan_exit
 
-  set +e
-  matches="$(git -C "$REPOSITORY_ROOT" grep -nEI "$SECRET_PATTERN" -- .)"
-  scan_exit=$?
-  set -e
+  if matches="$(git -C "$REPOSITORY_ROOT" grep -nEI "$SECRET_PATTERN" -- .)"; then
+    scan_exit=0
+  else
+    scan_exit=$?
+  fi
 
   case "$scan_exit" in
     0)
