@@ -6,7 +6,6 @@ readonly REPOSITORY_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 
 required_paths=(
   ".github/pull_request_template.md"
-  ".github/workflows/ci.yml"
   "AGENTS.md"
   "README.md"
   "VERSION"

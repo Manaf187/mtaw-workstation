@@ -27,6 +27,13 @@ Three future paths are planned:
 The current guest scripts are safe frameworks only. They do not install a
 workstation or configure a VM.
 
+## Repository checks
+
+Repository checks are currently run manually. GitHub Actions CI is not
+configured. The absence of CI does not validate the workstation, host
+compatibility, appliance, OVA, or operational suitability; those remain
+incomplete planned work.
+
 ## Repository layout
 
 - `manifests/` — the machine-readable locked baseline and conservative

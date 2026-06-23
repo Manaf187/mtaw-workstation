@@ -12,5 +12,6 @@ The build workflow is planned, not implemented.
 6. Generate a future release record and, if authorized, export a derived OVA.
 
 This bootstrap provides no package installation and performs no VM
-configuration. CI may install temporary static-analysis tools in its
-disposable runner; that is not a workstation build operation.
+configuration. Repository checks are currently run manually; GitHub Actions CI
+is not configured. The absence of CI does not establish workstation,
+compatibility, appliance, or OVA validation.

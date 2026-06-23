@@ -2,6 +2,11 @@
 
 All workstation validation described here is planned and not validated.
 
+Repository layout, Bash syntax, and repository validation checks are currently
+run manually. GitHub Actions CI is not configured. Manual repository checks and
+the absence of CI do not validate workstation functionality, host
+compatibility, an appliance, or an OVA.
+
 Planned clean-VM reproducibility testing will determine whether the documented
 automated and manual paths produce a functionally suitable analyst environment.
 Planned OVA re-import testing will determine whether a future exported
