@@ -80,11 +80,11 @@ Use `#!/usr/bin/env bash`, `set -Eeuo pipefail`, UTC log timestamps, dependency 
 
 Implement a `--help` capable Bash command that runs layout and syntax tests, reports individual `PASS` or `FAIL` results, detects unavailable optional tools as `NOT TESTED`, reports a non-authoritative secret-pattern scan with explicit limitations, and rejects prohibited tracked artifacts.
 
-- [ ] **Step 3: Run the tests to verify they pass**
+- [ ] **Step 3: Run syntax and safe-framework checks**
 
-Run: `bash tests/test-repository-layout.sh && bash tests/test-shell-syntax.sh && bash guest/validation/validate-repository.sh`
+Run: `bash tests/test-shell-syntax.sh && bash guest/install/install.sh --help && bash guest/install/stages/00-preflight.sh --help && bash guest/validation/validate-repository.sh --help`
 
-Expected: layout and syntax checks pass; unavailable optional tools are reported as `NOT TESTED`.
+Expected: all commands pass. The layout test remains expected to fail until the CI files are created in Task 4.
 
 - [ ] **Step 4: Commit safe script framework**
 
@@ -107,9 +107,10 @@ Use `permissions: { contents: read }`, `actions/checkout@v4`, an Ubuntu runner, 
 
 Require confirmation of baseline preservation, no secrets or prohibited artifacts, checks run, planned-control labeling, and no unsupported validation claims.
 
+
 - [ ] **Step 3: Run local static checks and inspect the tree**
 
-Run repository tests, the validator, available local linters, `git diff --check`, `git ls-files`, a secret-pattern scan, and a prohibited binary/artifact scan. Record unavailable tools as `NOT TESTED`.
+Run `bash tests/test-repository-layout.sh`, `bash tests/test-shell-syntax.sh`, and `bash guest/validation/validate-repository.sh`, then run available local linters, `git diff --check`, `git ls-files`, a secret-pattern scan, and a prohibited binary/artifact scan. Record unavailable tools as `NOT TESTED`.
 
 - [ ] **Step 4: Commit completed repository foundation**
 
