@@ -1,3 +1,21 @@
-# Bootstrap placeholder only.
-# No guest operating-system package set is selected or installed at this stage.
-# Future package additions require review against the locked baseline.
+git
+ca-certificates
+curl
+wget
+unzip
+zip
+p7zip-full
+jq
+ripgrep
+file
+exiftool
+dnsutils
+iproute2
+netcat-openbsd
+sqlite3
+build-essential
+python3.12-dev
+python3.12-venv
+pipx
+tmux
+tree

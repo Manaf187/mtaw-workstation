@@ -1,63 +1,38 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-readonly SCRIPT_NAME="$(basename "$0")"
-readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd -P)"
+source "$(dirname "${BASH_SOURCE[0]}")/lib/common.sh"
+stage_name=""; from_stage=""; assume_yes=0; allow_unsupported=0
 
-timestamp() {
-  date -u +"%Y-%m-%dT%H:%M:%SZ"
-}
+usage() { cat <<'EOF'
+Usage: install.sh [--dry-run] [--yes] [--stage NAME] [--from-stage NAME] [--report-dir PATH] [--allow-unsupported-platform]
 
-log() {
-  printf '%s %s: %s\n' "$(timestamp)" "$SCRIPT_NAME" "$*"
-}
-
-error_handler() {
-  local exit_code="$1"
-  local line_number="$2"
-  printf '%s %s: ERROR at line %s (exit %s)\n' \
-    "$(timestamp)" "$SCRIPT_NAME" "$line_number" "$exit_code" >&2
-}
-
-trap 'error_handler "$?" "$LINENO"' ERR
-
-usage() {
-  cat <<'EOF'
-Usage: install.sh [--help]
-
-Run the MTAW bootstrap preflight framework. This command performs read-only
-checks only; it does not install packages or configure an MTAW workstation.
+Installs the MTAW guest development baseline. Type INSTALL before changes, or
+use --yes for explicit noninteractive operation. --dry-run never modifies the system.
 EOF
 }
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --help|-h) usage; exit 0;; --dry-run) MTAW_DRY_RUN=1;; --yes) assume_yes=1;;
+    --allow-unsupported-platform) allow_unsupported=1;; --stage) stage_name="${2:?missing stage}"; shift;;
+    --from-stage) from_stage="${2:?missing stage}"; shift;; --report-dir) MTAW_REPORT_DIR="${2:?missing report directory}"; shift;;
+    *) printf 'ERROR: unknown option: %s\n' "$1" >&2; usage >&2; exit 2;;
+  esac; shift
+done
+MTAW_LOG_FILE="$MTAW_REPORT_DIR/install.log"; MTAW_REPORT_FILE="$MTAW_REPORT_DIR/report.txt"
+init_reports
+report PASS "options dry_run=$MTAW_DRY_RUN stage=${stage_name:-all} from_stage=${from_stage:-none} allow_unsupported=$allow_unsupported"
+report PASS "block inventory before execution"; inventory
 
-require_command() {
-  local command_name="$1"
-
-  if ! command -v "$command_name" >/dev/null 2>&1; then
-    printf '%s %s: ERROR required command not found: %s\n' \
-      "$(timestamp)" "$SCRIPT_NAME" "$command_name" >&2
-    return 1
-  fi
-}
-
-main() {
-  case "${1:-}" in
-    "")
-      ;;
-    --help|-h)
-      usage
-      return 0
-      ;;
-    *)
-      usage >&2
-      return 2
-      ;;
-  esac
-
-  require_command bash
-  require_command date
-  log "running read-only preflight; no workstation changes will be made"
-  "${SCRIPT_DIR}/stages/00-preflight.sh"
-}
-
-main "$@"
+start=0; end=$((${#MTAW_STAGES[@]} - 1))
+if [[ -n "$stage_name" ]]; then for i in "${!MTAW_STAGES[@]}"; do [[ "${MTAW_STAGES[$i]}" == "$stage_name" ]] && end=$i && break; done; [[ "${MTAW_STAGES[$end]}" == "$stage_name" ]] || { die "unknown stage: $stage_name"; exit 2; }; fi
+if [[ -n "$from_stage" ]]; then for i in "${!MTAW_STAGES[@]}"; do [[ "${MTAW_STAGES[$i]}" == "$from_stage" ]] && start=$i && break; done; [[ "${MTAW_STAGES[$start]}" == "$from_stage" ]] || { die "unknown from-stage: $from_stage"; exit 2; }; fi
+if (( start > end )); then die "requested stage range is unsafe"; exit 2; fi
+if (( end > 0 && MTAW_DRY_RUN == 0 )); then
+  if (( assume_yes == 0 )); then read -r -p 'Type INSTALL to continue: ' confirmation; [[ "$confirmation" == INSTALL ]] || { die "installation not confirmed"; exit 1; }; fi
+  require_command sudo
+fi
+for ((i=start; i<=end; i++)); do
+  stage="${MTAW_STAGES[$i]}"; report PASS "selected stage: $stage"; MTAW_ALLOW_UNSUPPORTED="$allow_unsupported" MTAW_STAGE_ROOT="$root" bash "$root/guest/install/stages/$stage.sh"; report PASS "completed stage: $stage"; done
+report 'NOT APPLICABLE' "automatic reboot is disabled"; report PASS "block inventory after execution"; inventory; report PASS "run ended"

@@ -1,6 +1,8 @@
 # Build Workflow
 
-The build workflow is planned, not implemented.
+The guest installer workflow is implemented repository functionality, but it is
+untested in an MTAW VM and does not establish compatibility or appliance
+validation.
 
 1. Start from a clean Ubuntu VM that matches the host and VM prerequisites.
 2. Select either the future automated installer or documented manual build.

@@ -1,8 +1,9 @@
 # Guest Installation Framework
 
-`install.sh` is a safe framework, not a complete installer. At this baseline
-it only invokes the read-only preflight stage and makes no guest changes.
+`install.sh` is a staged development-VM installer. Use `--dry-run` before an
+authorized run; confirmed execution can change timezone, packages, browsers,
+and a per-user Python environment. It does not configure the evidence disk.
 
-Future installation work must preserve strict error handling, UTC timestamps,
-explicit privilege checks, rerun safety where practical, and documented
-destructive operations.
+Use `--help` for stage selection, reports, explicit noninteractive use, and the
+unsupported-platform override. No execution result is a workstation or
+appliance validation claim.

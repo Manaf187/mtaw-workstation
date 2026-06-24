@@ -2,6 +2,10 @@
 
 All workstation validation described here is planned and not validated.
 
+The staged guest installer produces an observed-run report for development
+testing. That report is not a clean-VM reproducibility, compatibility,
+workstation, appliance, or OVA validation result.
+
 Repository layout, Bash syntax, and repository validation checks are currently
 run manually. GitHub Actions CI is not configured. Manual repository checks and
 the absence of CI do not validate workstation functionality, host

@@ -27,6 +27,10 @@ Three future paths are planned:
 The current guest scripts are safe frameworks only. They do not install a
 workstation or configure a VM.
 
+For initial development-VM testing, see `guest/install/install.sh --help` and
+`docs/manual-build.md`. The staged installer is implemented repository
+functionality, but it has not been run or validated in an MTAW VM.
+
 ## Repository checks
 
 Repository checks are currently run manually. GitHub Actions CI is not

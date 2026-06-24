@@ -4,13 +4,7 @@ set -Eeuo pipefail
 readonly SCRIPT_NAME="$(basename "$0")"
 readonly REPOSITORY_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 
-shell_scripts=(
-  "guest/install/install.sh"
-  "guest/install/stages/00-preflight.sh"
-  "guest/validation/validate-repository.sh"
-  "tests/test-repository-layout.sh"
-  "tests/test-shell-syntax.sh"
-)
+mapfile -t shell_scripts < <(cd "$REPOSITORY_ROOT" && find guest tests -type f -name '*.sh' -print | sort)
 
 failures=0
 

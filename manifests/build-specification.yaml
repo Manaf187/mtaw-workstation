@@ -70,8 +70,8 @@ credential_exclusions:
 
 implementation_status:
   repository_foundation: implemented
-  guest_installer: not_implemented
-  workstation_package_installation: not_implemented
+  guest_installer: implemented_untested
+  workstation_package_installation: implemented_untested
   virtualbox_automation: not_implemented
   appliance_build: not_implemented
   ova_export: not_implemented
