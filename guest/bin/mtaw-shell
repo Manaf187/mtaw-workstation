@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 source "$HOME/.local/share/mtaw/venv/bin/activate"
+exec "${SHELL:-/bin/bash}" -i
