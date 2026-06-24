@@ -1,13 +1,29 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
+
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)/lib/common.sh"
-source "$(os_release_file)"
-arch="$(machine_arch)"; report PASS "platform id=${ID:-unknown} version=${VERSION_ID:-unknown} arch=$arch"
-if [[ "${ID:-}" != ubuntu || "${VERSION_ID:-}" != 24.04 || ! "$arch" =~ ^(x86_64|amd64)$ ]]; then
-  if [[ "${MTAW_ALLOW_UNSUPPORTED:-0}" == 1 ]]; then report WARN "unsupported platform override supplied; no validation claim"; else die "unsupported platform; use --allow-unsupported-platform only for development testing"; exit 1; fi
-fi
-[[ "${VERSION_ID:-}" == 24.04 ]] && report PASS "Ubuntu 24.04.x accepted for development testing"
-[[ "${VERSION:-}" == *"24.04.4"* ]] || report WARN "reference baseline is Ubuntu 24.04.4; detected point release is not validated"
-for c in bash sudo apt systemctl git getent lsblk; do require_command "$c"; done
-[[ -d /run/live/medium ]] && { die "live environment detected"; exit 1; } || report PASS "installed-system indicator present"
-report PASS "memory=$(awk '/MemTotal/{print $2" kB"}' /proc/meminfo) cpu=$(nproc) timezone=$(timedatectl show -p Timezone --value 2>/dev/null || printf unknown)"; report PASS "disk inventory follows"; inventory
+
+check_platform() {
+  source "$(os_release_file)"
+  local arch
+  arch="$(machine_arch)"
+  report PASS "platform id=${ID:-unknown} release=${VERSION:-unknown} arch=$arch"
+  if [[ "${ID:-}" != ubuntu || "${VERSION_ID:-}" != 24.04 || ! "$arch" =~ ^(x86_64|amd64)$ ]]; then
+    [[ "${MTAW_ALLOW_UNSUPPORTED:-0}" == 1 ]] && { report WARN "unsupported-platform override recorded; validation not established"; return; }
+    report FAIL "unsupported platform; explicit override required"
+    return 1
+  fi
+  if is_reference_release; then report PASS "Ubuntu 24.04.4 reference baseline observed"; else report WARN "permitted development-test candidate; compatibility and validation not established"; fi
+}
+
+main() {
+  local command
+  check_platform
+  [[ -d /run/live/medium ]] && { report FAIL "live media detected"; return 1; }
+  for command in bash sudo apt systemctl git getent lsblk; do require_command "$command"; done
+  report PASS "memory=$(awk '/MemTotal/{print $2" kB"}' /proc/meminfo) cpu=$(nproc)"
+  if getent hosts archive.ubuntu.com >/dev/null 2>&1; then report PASS "network resolution observed"; else report WARN "network resolution unavailable"; fi
+  inventory preflight
+}
+
+main "$@"
