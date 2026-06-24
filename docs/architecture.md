@@ -22,6 +22,16 @@ Guest-side scripts cannot prove host settings such as Secure Boot, BitLocker,
 VirtualBox networking mode, shared-folder state, or USB passthrough. Those are
 host-side validation requirements.
 
+## Guest installer model
+
+`guest/install/install.sh` dispatches numbered stages and records UTC logs,
+reports, selected stages, and before/after block-device inventories under the
+configured report directory. Shared controls in `guest/install/lib/common.sh`
+keep dry runs non-modifying, gate privileged commands, and enforce the system
+baseline dependency for later stages. Stage 70 reports guest-side observed
+state only; it cannot establish clean-VM reproducibility, host controls, or
+appliance suitability.
+
 ## Storage model
 
 The planned VM has separate dynamically allocated system and case/evidence

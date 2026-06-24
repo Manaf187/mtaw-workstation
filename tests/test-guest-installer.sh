@@ -58,6 +58,8 @@ grep -Fq 'record_stage_success' "$root/guest/install/lib/common.sh" || fail "mis
 grep -Fq 'validate_dependencies' "$root/guest/install/lib/common.sh" || fail "missing dependency validation"
 grep -Fq 'run_privileged' "$root/guest/install/lib/common.sh" || fail "missing privileged command gate"
 grep -Fq 'compare_inventories' "$root/guest/install/lib/common.sh" || fail "missing inventory comparison"
+grep -Fq 'MTAW_STAGES=(' "$root/guest/install/lib/common.sh" || fail "missing shared stage list"
+grep -Fq 'die()' "$root/guest/install/lib/common.sh" || fail "missing dispatcher error helper"
 grep -Fq 'mtaw-shell' "$root/guest/install/stages/30-python-environment.sh" || fail "missing functional shell launcher"
 grep -Fq 'libimage-exiftool-perl' "$root/manifests/apt-packages.txt" || fail "incorrect ExifTool package"
 if rg -n 'sudo[[:space:]]+DEBIAN_FRONTEND=' "$root/guest/install"; then fail "malformed privileged environment invocation"; fi

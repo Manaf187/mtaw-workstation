@@ -79,7 +79,7 @@ implementation_status:
   signing: not_implemented
 
 validation_status:
-  repository_static_checks: planned
+  repository_static_checks: implemented_repository_only
   clean_vm_reproducibility: not_tested
   ova_reimport: not_tested
   host_controls: not_validated

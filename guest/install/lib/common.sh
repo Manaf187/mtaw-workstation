@@ -7,7 +7,9 @@ MTAW_LOG_FILE="$MTAW_REPORT_DIR/install.log"
 MTAW_REPORT_FILE="$MTAW_REPORT_DIR/report.txt"
 MTAW_STATE_DIR="$MTAW_REPORT_DIR/stages"
 MTAW_CURRENT_STAGE=""
+readonly MTAW_STAGES=(00-preflight 10-system-baseline 20-core-packages 30-python-environment 40-browsers 50-workspace-templates 60-security-defaults 70-validation)
 utc() { date -u +"%Y-%m-%dT%H:%M:%SZ"; }
+die() { printf '%s ERROR: %s\n' "$(utc)" "$*" >&2; }
 log() { if [[ "$MTAW_DRY_RUN" == 1 ]]; then printf '%s %s\n' "$(utc)" "$*"; else printf '%s %s\n' "$(utc)" "$*" | tee -a "$MTAW_LOG_FILE"; fi; }
 report() { if [[ "$MTAW_DRY_RUN" == 1 ]]; then printf '%s %s %s\n' "$1" "$(utc)" "$2"; else printf '%s %s %s\n' "$1" "$(utc)" "$2" | tee -a "$MTAW_REPORT_FILE"; fi; }
 require_command() { command -v "$1" >/dev/null 2>&1 || { report FAIL "missing command: $1"; return 1; }; }

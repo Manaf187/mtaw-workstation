@@ -7,9 +7,10 @@ M. Mohamed.
 
 ## Status
 
-Version `0.1.0-dev` is an unvalidated development baseline. No MTAW
-workstation, installer, OVA, release, checksum, compatibility result, or
-operational validation result exists at this stage.
+Version `0.1.0-dev` is an unvalidated development baseline. The repository
+contains a staged guest installer, but it has not been run or validated in an
+MTAW VM. No MTAW workstation, OVA, release, checksum, compatibility result,
+or operational validation result exists at this stage.
 
 ## Repository-first model
 
@@ -24,8 +25,9 @@ Three future paths are planned:
 2. A documented manual build from this repository.
 3. A prebuilt appliance derived from the same repository.
 
-The current guest scripts are safe frameworks only. They do not install a
-workstation or configure a VM.
+The current guest scripts can configure an authorized Ubuntu development VM;
+they do not configure the VirtualBox host, an evidence disk, or an appliance.
+Their observed-run report is not a workstation or appliance validation claim.
 
 For initial development-VM testing, see `guest/install/install.sh --help` and
 `docs/manual-build.md`. The staged installer is implemented repository
