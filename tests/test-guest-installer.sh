@@ -7,6 +7,43 @@ stages=(00-preflight 10-system-baseline 20-core-packages 30-python-environment 4
 
 fail() { printf 'FAIL: %s\n' "$1" >&2; failures=$((failures + 1)); }
 
+test_validation_stage() {
+  local fixture_dir
+  local fixture_home
+  local fixture_bin
+  local os_release
+  local command_name
+  local validation_output
+
+  fixture_dir="$(mktemp -d)"
+  fixture_home="$fixture_dir/home"
+  fixture_bin="$fixture_dir/bin"
+  os_release="$fixture_dir/os-release"
+  mkdir -p "$fixture_home/.local/bin" "$fixture_home/.local/share/mtaw/venv/bin" "$fixture_bin"
+  printf '%s\n' 'ID=ubuntu' 'VERSION="Ubuntu 24.04.4 LTS"' >"$os_release"
+
+  for command_name in python3.12 git curl wget jq rg file exiftool sqlite3 tmux tree; do
+    printf '%s\n' '#!/usr/bin/env bash' 'exit 0' >"$fixture_bin/$command_name"
+    chmod +x "$fixture_bin/$command_name"
+  done
+  for command_name in "$fixture_home/.local/share/mtaw/venv/bin/python" "$fixture_home/.local/bin/mtaw-shell" "$fixture_home/.local/bin/mtaw-jupyter"; do
+    printf '%s\n' '#!/usr/bin/env bash' 'exit 0' >"$command_name"
+    chmod +x "$command_name"
+  done
+
+  if ! validation_output="$(MTAW_DRY_RUN=1 MTAW_REPORT_DIR="$fixture_dir/report" MTAW_OS_RELEASE_FILE="$os_release" MTAW_ARCH=amd64 HOME="$fixture_home" PATH="$fixture_bin:$PATH" bash "$root/guest/install/stages/70-validation.sh" 2>&1)"; then
+    fail "validation stage should pass with an observed reference-baseline fixture"
+  else
+    grep -Fq 'PASS ' <<<"$validation_output" || fail "validation stage did not emit PASS results"
+    grep -Fq 'Ubuntu family' <<<"$validation_output" || fail "validation stage did not check the Ubuntu family"
+    grep -Fq 'NOT TESTED' <<<"$validation_output" || fail "validation stage did not distinguish untested controls"
+    grep -Fq 'NOT APPLICABLE' <<<"$validation_output" || fail "validation stage did not record excluded controls"
+  fi
+
+  # Remove only the temporary fixture created by this test.
+  rm -rf "$fixture_dir"
+}
+
 for stage in "${stages[@]}"; do
   [[ -f "$root/guest/install/stages/${stage}.sh" ]] || fail "missing stage: ${stage}"
 done
@@ -32,6 +69,8 @@ fi
 if rg -n -i '(default password|password=|api[_-]?key=|token=)' "$root/guest/install"; then
   fail "installer contains credential-like default"
 fi
+
+test_validation_stage
 
 if [[ "$failures" -gt 0 ]]; then
   exit 1

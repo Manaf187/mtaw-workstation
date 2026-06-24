@@ -2,7 +2,17 @@
 set -Eeuo pipefail
 source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)/lib/common.sh"
 failures=0
-check() { if "$2"; then report PASS "$1"; else report FAIL "$1"; failures=$((failures + 1)); fi; }
+check() {
+  local description="$1"
+  shift
+
+  if "$@"; then
+    report PASS "$description"
+  else
+    report FAIL "$description"
+    failures=$((failures + 1))
+  fi
+}
 validate_architecture() {
   local detected_arch
   detected_arch="$(machine_arch)"
@@ -22,7 +32,12 @@ main() {
   check "mtaw-shell launcher" test -x "$HOME/.local/bin/mtaw-shell"
   check "mtaw-jupyter launcher" test -x "$HOME/.local/bin/mtaw-jupyter"
   for command in git curl wget jq rg file exiftool sqlite3 tmux tree; do check "command: $command" command -v "$command"; done
-  [[ -f "$MTAW_REPORT_DIR/lsblk-before.txt" && -f "$MTAW_REPORT_DIR/lsblk-after.txt" ]] && report PASS "block inventories present" || report WARN "block inventories unavailable"
+  if [[ -f "$MTAW_REPORT_DIR/lsblk-before.txt" ]]; then
+    report PASS "block inventory before execution present"
+  else
+    report WARN "block inventory before execution unavailable"
+  fi
+  report 'NOT TESTED' "clean-VM reproducibility, host controls, and appliance validation are outside this observed guest run"
   report 'NOT APPLICABLE' "evidence-disk, SSH, backups, host integration, OVA, signing, publishing excluded"
   (( failures == 0 ))
 }
