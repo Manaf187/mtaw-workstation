@@ -34,5 +34,14 @@ if (( end > 0 && MTAW_DRY_RUN == 0 )); then
   require_command sudo
 fi
 for ((i=start; i<=end; i++)); do
-  stage="${MTAW_STAGES[$i]}"; report PASS "selected stage: $stage"; MTAW_ALLOW_UNSUPPORTED="$allow_unsupported" MTAW_STAGE_ROOT="$root" bash "$root/guest/install/stages/$stage.sh"; report PASS "completed stage: $stage"; done
+  stage="${MTAW_STAGES[$i]}"
+  MTAW_CURRENT_STAGE="$stage"
+  report PASS "selected stage: $stage"
+  if [[ "$stage" != 00-preflight ]]; then
+    validate_dependencies "$stage"
+  fi
+  MTAW_ALLOW_UNSUPPORTED="$allow_unsupported" MTAW_STAGE_ROOT="$root" bash "$root/guest/install/stages/$stage.sh"
+  record_stage_success "$stage"
+  report PASS "completed stage: $stage"
+done
 report 'NOT APPLICABLE' "automatic reboot is disabled"; report PASS "block inventory after execution"; inventory; report PASS "run ended"
