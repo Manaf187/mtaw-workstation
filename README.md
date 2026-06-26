@@ -12,6 +12,10 @@ contains a staged guest installer, but it has not been run or validated in an
 MTAW VM. No MTAW workstation, OVA, release, checksum, compatibility result,
 or operational validation result exists at this stage.
 
+The repository includes a controlled OSINT core profile, optional specialist
+profile records, and a source-data bookmark catalogue. These records do not
+claim that a workstation has been built or operationally validated.
+
 ## Repository-first model
 
 This repository is the source of truth. It will eventually define how a clean

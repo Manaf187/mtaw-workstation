@@ -28,9 +28,10 @@ host-side validation requirements.
 reports, selected stages, and before/after block-device inventories under the
 configured report directory. Shared controls in `guest/install/lib/common.sh`
 keep dry runs non-modifying, gate privileged commands, and enforce the system
-baseline dependency for later stages. Stage 70 reports guest-side observed
-state only; it cannot establish clean-VM reproducibility, host controls, or
-appliance suitability.
+baseline dependency for later stages. Stage 45 adds the controlled OSINT core
+profile after browsers and before workspace templates. Stage 70 reports
+guest-side observed state only; it cannot establish clean-VM reproducibility,
+host controls, or appliance suitability.
 
 ## Storage model
 

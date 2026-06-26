@@ -9,6 +9,16 @@ for the staged guest installer. They describe requested development-VM
 dependencies; package availability and compatibility remain unvalidated until
 planned clean-VM testing is completed.
 
+`osint-core-tools.yaml` records the controlled OSINT core profile. Stage
+`45-osint-core` automatically installs only reviewed Ubuntu APT packages from
+that profile. ExifTool remains in the base APT manifest and is not duplicated
+in the OSINT stage.
+
+`osint-specialist-tools.yaml` documents optional specialist tools that are not
+installed by the base profile. `osint-bookmarks.yaml` is source data for a
+curated external-services catalogue; it must not modify browser profiles,
+store credentials, or install extensions.
+
 The manifest's repository-check status is changing from `planned` to
 `implemented_repository_only` because the check scripts and regression
 coverage now exist in this repository. This is an implementation-status

@@ -6,7 +6,8 @@ appliance validation.
 
 1. Start from a clean Ubuntu VM that matches the host and VM prerequisites.
 2. Run `bash guest/install/install.sh --dry-run`, then use the staged installer
-   only for an authorized guest-side development-VM run.
+   only for an authorized guest-side development-VM run. The dry run must
+   remain non-modifying, including the OSINT core stage.
 3. Apply guest-side configuration only after host-side VirtualBox controls are
    independently configured and recorded.
 4. Treat the installer report as observed state, then run planned functional

@@ -20,11 +20,15 @@ process. `--report-dir PATH` changes the default per-user report location of
 unsupported platform validated.
 
 The stages run in this order: preflight, system baseline, core packages,
-Python environment, browsers, workspace templates, security defaults, and
-observed-state validation. Package stages can change the timezone and install
-or upgrade packages. The Python stage creates or reuses
+Python environment, browsers, OSINT core, workspace templates, security
+defaults, and observed-state validation. Package stages can change the
+timezone and install or upgrade packages. The Python stage creates or reuses
 `~/.local/share/mtaw/venv` and installs the `mtaw-shell` and `mtaw-jupyter`
 launchers in `~/.local/bin`.
+
+The OSINT core stage installs only reviewed Ubuntu APT packages from
+`manifests/osint-core-tools.yaml`; it does not install specialist OSINT tools,
+browser extensions, credentials, or browser profile data.
 
 The installer does not partition, format, mount, encrypt, or identify an
 evidence disk. It does not enable SSH, configure host integration, create
