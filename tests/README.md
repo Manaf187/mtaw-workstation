@@ -6,8 +6,9 @@ build or validate an MTAW virtual machine.
 - `test-repository-layout.sh` checks the required bootstrap layout and rejects
   a premature `LICENSE` file.
 - `test-shell-syntax.sh` checks the Bash syntax of all required Bash scripts.
-- `test-guest-installer.sh` checks the staged-installer contract and runs the
-  validation stage against an isolated, non-modifying fixture.
+- `test-guest-installer.sh` checks the staged-installer contract, OSINT core
+  profile controls, dry-run behavior, and the validation stage against
+  isolated, non-modifying fixtures.
 
 Run both from a Bash-capable environment:
 

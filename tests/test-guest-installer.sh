@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 failures=0
-stages=(00-preflight 10-system-baseline 20-core-packages 30-python-environment 40-browsers 50-workspace-templates 60-security-defaults 70-validation)
+stages=(00-preflight 10-system-baseline 20-core-packages 30-python-environment 40-browsers 45-osint-core 50-workspace-templates 60-security-defaults 70-validation)
 
 fail() { printf 'FAIL: %s\n' "$1" >&2; failures=$((failures + 1)); }
 
@@ -22,7 +22,7 @@ make_validation_fixture() {
   printf '%s\n' 'inventory' >"$fixture_dir/report/lsblk-before.txt"
   printf '%s\n' 'inventory' >"$fixture_dir/report/lsblk-after.txt"
 
-  for command_name in 00-preflight 10-system-baseline 20-core-packages 30-python-environment 40-browsers 50-workspace-templates 60-security-defaults; do
+  for command_name in 00-preflight 10-system-baseline 20-core-packages 30-python-environment 40-browsers 45-osint-core 50-workspace-templates 60-security-defaults; do
     printf 'version=%s\nstage=%s\ncompleted=%s\n' "$(tr -d '\r\n' <"$root/VERSION")" "$command_name" '2026-06-24T00:00:00Z' >"$fixture_dir/report/stages/$command_name.state"
   done
   for command_name in cases evidence-register collection-logs notebooks; do
@@ -35,7 +35,10 @@ make_validation_fixture() {
   printf '%s\n' '#!/usr/bin/env bash' 'printf "%s\\n" "pip 25.0"' >"$fixture_dir/home/.local/share/mtaw/venv/bin/pip"
   printf '%s\n' '#!/usr/bin/env bash' 'printf "%s\\n" "Mozilla Firefox 127.0"' >"$fixture_dir/bin/firefox"
   printf '%s\n' '#!/usr/bin/env bash' 'printf "%s\\n" "Chromium 126.0"' >"$fixture_dir/bin/chromium"
-  for command_name in "$fixture_dir/bin/timedatectl" "$fixture_dir/bin/dpkg-query" "$fixture_dir/home/.local/share/mtaw/venv/bin/python" "$fixture_dir/home/.local/share/mtaw/venv/bin/pip" "$fixture_dir/bin/firefox" "$fixture_dir/bin/chromium"; do
+  printf '%s\n' '#!/usr/bin/env bash' 'printf "%s\\n" "ffmpeg version 6.1.1"' >"$fixture_dir/bin/ffmpeg"
+  printf '%s\n' '#!/usr/bin/env bash' 'printf "%s\\n" "12.76"' >"$fixture_dir/bin/exiftool"
+  printf '%s\n' '#!/usr/bin/env bash' 'printf "%s\\n" "Translate Shell 0.9.7.1"' >"$fixture_dir/bin/trans"
+  for command_name in "$fixture_dir/bin/timedatectl" "$fixture_dir/bin/dpkg-query" "$fixture_dir/home/.local/share/mtaw/venv/bin/python" "$fixture_dir/home/.local/share/mtaw/venv/bin/pip" "$fixture_dir/bin/firefox" "$fixture_dir/bin/chromium" "$fixture_dir/bin/ffmpeg" "$fixture_dir/bin/exiftool" "$fixture_dir/bin/trans"; do
     chmod +x "$command_name"
   done
   cp "$root/guest/bin/mtaw-shell" "$fixture_dir/home/.local/bin/mtaw-shell"
@@ -106,7 +109,7 @@ test_successful_validation_fixture() {
       [[ "$package_name" == beautifulsoup4 ]] && package_name=bs4
       grep -Fq "Python import: $package_name" <<<"$validation_output" || fail "validation fixture did not check Python import: $package_name"
     done
-    for command_name in 'UTC timezone' 'venv Python' 'venv pip' 'JupyterLab major version 4' 'Firefox version' 'Chromium version' 'workspace directory: cases' 'workspace template: notebooks' 'mtaw-shell references intended venv' 'mtaw-jupyter binds to loopback' 'launchers do not disable authentication' 'stage state: 60-security-defaults' 'installer version' 'apt manifest SHA-256' 'Python requirements SHA-256' 'block inventory before execution' 'block inventory after execution' 'block inventory comparison' 'scoped MTAW credential check'; do
+    for command_name in 'UTC timezone' 'venv Python' 'venv pip' 'JupyterLab major version 4' 'Firefox version' 'Chromium version' 'workspace directory: cases' 'workspace template: notebooks' 'mtaw-shell references intended venv' 'mtaw-jupyter binds to loopback' 'launchers do not disable authentication' 'stage state: 60-security-defaults' 'OSINT core manifest present' 'OSINT core command: ffmpeg' 'OSINT core command: exiftool' 'OSINT core command: trans' 'OSINT bookmark manifest present' 'no specialist OSINT tools installed in base profile' 'installer version' 'apt manifest SHA-256' 'Python requirements SHA-256' 'OSINT core manifest SHA-256' 'OSINT bookmark manifest SHA-256' 'block inventory before execution' 'block inventory after execution' 'block inventory comparison' 'scoped MTAW credential check'; do
       grep -Fq "$command_name" <<<"$validation_output" || fail "validation fixture did not report: $command_name"
     done
     grep -Fq 'Firefox version: Mozilla Firefox 127.0' <<<"$validation_output" || fail "validation fixture did not report the Firefox version"
@@ -151,6 +154,24 @@ test_authentication_override_failure_fixture() {
   rm -rf "$fixture_dir"
 }
 
+test_osint_core_missing_command_failure_fixture() {
+  local fixture_dir
+  local validation_output
+
+  fixture_dir="$(make_validation_fixture)"
+  printf '%s\n' '#!/usr/bin/env bash' 'exit 127' >"$fixture_dir/bin/ffmpeg"
+  chmod +x "$fixture_dir/bin/ffmpeg"
+  if validation_output="$(run_validation_fixture "$fixture_dir" 2>&1)"; then
+    fail "validation stage accepted a fixture without the mandatory OSINT core ffmpeg command"
+  else
+    grep -Fq 'FAIL ' <<<"$validation_output" || fail "OSINT core missing command did not report FAIL"
+    grep -Fq 'OSINT core command: ffmpeg' <<<"$validation_output" || fail "OSINT core missing command did not identify ffmpeg"
+  fi
+
+  # Remove only the temporary fixture created by this test.
+  rm -rf "$fixture_dir"
+}
+
 for stage in "${stages[@]}"; do
   [[ -f "$root/guest/install/stages/${stage}.sh" ]] || fail "missing stage: ${stage}"
 done
@@ -169,8 +190,16 @@ grep -Fq 'MTAW_STAGES=(' "$root/guest/install/lib/common.sh" || fail "missing sh
 grep -Fq 'die()' "$root/guest/install/lib/common.sh" || fail "missing dispatcher error helper"
 grep -Fq 'mtaw-shell' "$root/guest/install/stages/30-python-environment.sh" || fail "missing functional shell launcher"
 grep -Fq 'libimage-exiftool-perl' "$root/manifests/apt-packages.txt" || fail "incorrect ExifTool package"
+grep -Fq '45-osint-core' "$root/guest/install/lib/common.sh" || fail "missing OSINT core stage ordering"
+grep -Fq 'osint-core-tools.yaml' "$root/guest/install/stages/45-osint-core.sh" || fail "OSINT core stage does not use the core manifest"
+grep -Fq 'translate-shell' "$root/manifests/osint-core-tools.yaml" || fail "OSINT core manifest does not include translate-shell"
+grep -Fq 'deferred' "$root/manifests/osint-core-tools.yaml" || fail "OSINT core manifest does not document deferred candidates"
+grep -Fq 'account_required:' "$root/manifests/osint-bookmarks.yaml" || fail "OSINT bookmarks do not record account requirements"
+grep -Fq 'license:' "$root/manifests/osint-core-tools.yaml" || fail "OSINT core manifest lacks license records"
+grep -Fq 'license:' "$root/manifests/osint-specialist-tools.yaml" || fail "OSINT specialist manifest lacks license records"
 if rg -n 'sudo[[:space:]]+DEBIAN_FRONTEND=' "$root/guest/install"; then fail "malformed privileged environment invocation"; fi
-if rg -n '^[^#]*sudo[[:space:]]' "$root/guest/install/stages"/{10,20,30,40,50,60,70}-*.sh; then fail "stage invokes sudo directly"; fi
+if rg -n '^[^#]*sudo[[:space:]]' "$root/guest/install/stages"/{10,20,30,40,45,50,60,70}-*.sh; then fail "stage invokes sudo directly"; fi
+if rg -n 'curl[^\n|]*\|[[:space:]]*(bash|sh)' "$root/guest/install" "$root/docs"; then fail "installer or docs contain curl-pipe-shell pattern"; fi
 
 if rg -n -i '\b(mkfs|fdisk|parted|cryptsetup|mount[[:space:]])\b' "$root/guest/install"; then
   fail "installer contains prohibited evidence-disk mutation command"
@@ -178,10 +207,17 @@ fi
 if rg -n -i '(default password|password=|api[_-]?key=|token=)' "$root/guest/install"; then
   fail "installer contains credential-like default"
 fi
+if rg -n -i '(spiderfoot|maltego|phoneinfoga|instaloader)' "$root/guest/install/stages/45-osint-core.sh"; then
+  fail "OSINT core stage installs specialist-profile tooling"
+fi
+if rg -n -i '(addons\.mozilla\.org|chrome\.google\.com/webstore|web-ext|install[^[:cntrl:]]*extension)' "$root/guest/install/stages/45-osint-core.sh"; then
+  fail "OSINT core stage installs browser extensions"
+fi
 
 test_successful_validation_fixture
 test_mandatory_validation_failure_fixture
 test_authentication_override_failure_fixture
+test_osint_core_missing_command_failure_fixture
 test_dispatcher_dry_run_propagates_execution_context
 
 if [[ "$failures" -gt 0 ]]; then
