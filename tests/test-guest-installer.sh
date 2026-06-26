@@ -51,6 +51,44 @@ run_validation_fixture() {
   MTAW_DRY_RUN=1 MTAW_STAGE_ROOT="$root" MTAW_REPORT_DIR="$fixture_dir/report" MTAW_OS_RELEASE_FILE="$fixture_dir/os-release" MTAW_ARCH=amd64 HOME="$fixture_dir/home" PATH="$fixture_dir/bin:$PATH" bash "$root/guest/install/stages/70-validation.sh"
 }
 
+make_dispatcher_dry_run_fixture() {
+  local fixture_dir
+  local command_name
+
+  fixture_dir="$(mktemp -d)"
+  mkdir -p "$fixture_dir/bin" "$fixture_dir/home" "$fixture_dir/report"
+  printf '%s\n' 'ID=ubuntu' 'VERSION_ID="24.04"' 'VERSION="Ubuntu 24.04.4 LTS"' >"$fixture_dir/os-release"
+
+  for command_name in sudo apt apt-get systemctl git lsblk python3.12 firefox chromium install mkdir timedatectl; do
+    printf '%s\n' '#!/usr/bin/env bash' 'exit 0' >"$fixture_dir/bin/$command_name"
+    chmod +x "$fixture_dir/bin/$command_name"
+  done
+  printf '%s\n' '#!/usr/bin/env bash' '[[ "${1:-}" == hosts ]] && exit 0' 'exit 0' >"$fixture_dir/bin/getent"
+  chmod +x "$fixture_dir/bin/getent"
+
+  printf '%s' "$fixture_dir"
+}
+
+test_dispatcher_dry_run_propagates_execution_context() {
+  local fixture_dir
+  local dry_run_output
+
+  fixture_dir="$(make_dispatcher_dry_run_fixture)"
+  if ! dry_run_output="$(MTAW_OS_RELEASE_FILE="$fixture_dir/os-release" MTAW_ARCH=amd64 HOME="$fixture_dir/home" PATH="$fixture_dir/bin:$PATH" bash "$root/guest/install/install.sh" --dry-run --stage 60-security-defaults --report-dir "$fixture_dir/report" 2>&1)"; then
+    fail "dispatcher dry run should complete through non-validation stages"
+  else
+    grep -Fq 'options dry_run=1' <<<"$dry_run_output" || fail "dispatcher dry run did not report dry-run mode"
+    grep -Fq 'completed stage: 60-security-defaults' <<<"$dry_run_output" || fail "dispatcher dry run did not reach the requested final stage"
+    grep -Fq 'DRY RUN privileged:' <<<"$dry_run_output" || fail "dispatcher dry run did not propagate dry-run mode to privileged stage commands"
+  fi
+  [[ ! -e "$fixture_dir/report/install.log" ]] || fail "dispatcher dry run wrote an install log"
+  [[ ! -e "$fixture_dir/report/report.txt" ]] || fail "dispatcher dry run wrote a report file"
+  [[ ! -d "$fixture_dir/report/stages" ]] || fail "dispatcher dry run wrote stage state"
+
+  # Remove only the temporary fixture created by this test.
+  rm -rf "$fixture_dir"
+}
+
 test_successful_validation_fixture() {
   local fixture_dir
   local validation_output
@@ -144,6 +182,7 @@ fi
 test_successful_validation_fixture
 test_mandatory_validation_failure_fixture
 test_authentication_override_failure_fixture
+test_dispatcher_dry_run_propagates_execution_context
 
 if [[ "$failures" -gt 0 ]]; then
   exit 1

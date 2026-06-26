@@ -40,7 +40,7 @@ for ((i=start; i<=end; i++)); do
   if [[ "$stage" != 00-preflight ]]; then
     validate_dependencies "$stage"
   fi
-  MTAW_ALLOW_UNSUPPORTED="$allow_unsupported" MTAW_STAGE_ROOT="$root" bash "$root/guest/install/stages/$stage.sh"
+  MTAW_ALLOW_UNSUPPORTED="$allow_unsupported" MTAW_CURRENT_STAGE="$stage" MTAW_DRY_RUN="$MTAW_DRY_RUN" MTAW_REPORT_DIR="$MTAW_REPORT_DIR" MTAW_STAGE_ROOT="$root" bash "$root/guest/install/stages/$stage.sh"
   record_stage_success "$stage"
   report PASS "completed stage: $stage"
 done

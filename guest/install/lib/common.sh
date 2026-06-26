@@ -6,7 +6,7 @@ MTAW_REPORT_DIR="${MTAW_REPORT_DIR:-$HOME/.local/state/mtaw}"
 MTAW_LOG_FILE="$MTAW_REPORT_DIR/install.log"
 MTAW_REPORT_FILE="$MTAW_REPORT_DIR/report.txt"
 MTAW_STATE_DIR="$MTAW_REPORT_DIR/stages"
-MTAW_CURRENT_STAGE=""
+MTAW_CURRENT_STAGE="${MTAW_CURRENT_STAGE:-}"
 readonly MTAW_STAGES=(00-preflight 10-system-baseline 20-core-packages 30-python-environment 40-browsers 50-workspace-templates 60-security-defaults 70-validation)
 utc() { date -u +"%Y-%m-%dT%H:%M:%SZ"; }
 die() { printf '%s ERROR: %s\n' "$(utc)" "$*" >&2; }
@@ -21,7 +21,7 @@ trap finalize_run EXIT
 run_command() { log "COMMAND: $*"; [[ "$MTAW_DRY_RUN" == 1 ]] && { log "DRY RUN: $*"; return 0; }; "$@" >>"$MTAW_LOG_FILE" 2>&1; }
 run_privileged() { [[ "$MTAW_DRY_RUN" == 1 ]] && { log "DRY RUN privileged: $*"; return 0; }; require_command sudo; run_command sudo "$@"; }
 record_stage_success() { [[ "$MTAW_DRY_RUN" == 1 ]] && return; local tmp="$MTAW_STATE_DIR/$1.tmp"; printf 'version=%s\nstage=%s\ncompleted=%s\n' "$(cat "$MTAW_STAGE_ROOT/VERSION")" "$1" "$(utc)" >"$tmp"; mv "$tmp" "$MTAW_STATE_DIR/$1.state"; }
-validate_dependencies() { [[ "$1" == 00-preflight || "$1" == 10-system-baseline ]] && return; [[ -f "$MTAW_STATE_DIR/10-system-baseline.state" ]] || { report FAIL "missing successful dependency: 10-system-baseline"; return 1; }; }
+validate_dependencies() { [[ "$MTAW_DRY_RUN" == 1 || "$1" == 00-preflight || "$1" == 10-system-baseline ]] && return; [[ -f "$MTAW_STATE_DIR/10-system-baseline.state" ]] || { report FAIL "missing successful dependency: 10-system-baseline"; return 1; }; }
 network_required() { getent hosts archive.ubuntu.com >/dev/null 2>&1 || { report FAIL "network resolution required"; return 1; }; }
 os_release_file() { printf '%s' "${MTAW_OS_RELEASE_FILE:-/etc/os-release}"; }
 machine_arch() { printf '%s' "${MTAW_ARCH:-$(uname -m)}"; }
