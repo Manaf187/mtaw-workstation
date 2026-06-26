@@ -1,0 +1,98 @@
+schema_version: 1
+catalogue: osint-bookmarks
+status: source_data_only
+last_reviewed_utc: 2026-06-26T00:00:00Z
+policy:
+  modifies_browser_profile: false
+  installs_extensions: false
+  stores_credentials: false
+  note: Source data for manual bookmark import or documentation only.
+bookmarks:
+  - id: have-i-been-pwned
+    name: Have I Been Pwned
+    category: breach-awareness
+    url: https://haveibeenpwned.com/
+    access_model: free_and_commercial
+    account_required: false
+    subscription_required: false
+    cautions: Do not submit sensitive addresses without authorization; API use has separate terms and keys.
+  - id: google-images
+    name: Google Images
+    category: reverse-image-search
+    url: https://images.google.com/
+    access_model: free
+    account_required: false
+    subscription_required: false
+    cautions: Queries and uploaded images may be logged by Google.
+  - id: yandex-images
+    name: Yandex Images
+    category: reverse-image-search
+    url: https://yandex.com/images/
+    access_model: free
+    account_required: false
+    subscription_required: false
+    cautions: Queries and uploaded images may be logged by Yandex and handled under its terms.
+  - id: wayback-machine
+    name: Wayback Machine
+    category: web-archives
+    url: https://web.archive.org/
+    access_model: free
+    account_required: false
+    subscription_required: false
+    cautions: Archived pages may contain personal data; respect robots, copyright, and case-handling rules.
+  - id: google-maps
+    name: Google Maps
+    category: maps-geolocation
+    url: https://www.google.com/maps
+    access_model: free
+    account_required: false
+    subscription_required: false
+    cautions: Location searches may disclose investigative interest to Google.
+  - id: mapillary
+    name: Mapillary
+    category: maps-geolocation
+    url: https://www.mapillary.com/
+    access_model: free_and_commercial
+    account_required: false
+    subscription_required: false
+    cautions: Imagery may include people, vehicles, and location metadata; follow service terms.
+  - id: shodan
+    name: Shodan
+    category: internet-exposure-search
+    url: https://www.shodan.io/
+    access_model: free_and_commercial
+    account_required: true
+    subscription_required: false
+    cautions: API and advanced features may require keys or subscriptions; search only authorized targets.
+  - id: censys
+    name: Censys
+    category: internet-exposure-search
+    url: https://search.censys.io/
+    access_model: free_and_commercial
+    account_required: true
+    subscription_required: false
+    cautions: API and advanced features require account controls; follow acceptable-use terms.
+  - id: wigle
+    name: WiGLE
+    category: wireless-geolocation
+    url: https://wigle.net/
+    access_model: free_and_commercial
+    account_required: true
+    subscription_required: false
+    cautions: Wireless-network location data can be sensitive; use only for authorized analysis.
+  - id: deepl
+    name: DeepL
+    category: translation
+    url: https://www.deepl.com/translator
+    access_model: free_and_commercial
+    account_required: false
+    subscription_required: false
+    cautions: Text submitted to translation services may be processed by the provider; do not submit sensitive case text without approval.
+  - id: truecaller
+    name: Truecaller
+    category: phone-lookup
+    url: https://www.truecaller.com/
+    access_model: free_and_commercial
+    account_required: true
+    subscription_required: false
+    cautions: Phone-number lookup involves personal data and service terms; do not store credentials or contact data in this repository.

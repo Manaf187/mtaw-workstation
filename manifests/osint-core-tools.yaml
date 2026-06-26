@@ -1,0 +1,103 @@
+schema_version: 1
+profile: osint-core
+status: unvalidated_development_baseline
+last_reviewed_utc: 2026-06-26T00:00:00Z
+discovery_reference:
+  name: Trace Labs Awesome OSINT
+  url: https://github.com/tracelabs/awesome-osint
+  license: MPL-2.0
+  note: Tool discovery reference only; linked tools keep their own licenses and support terms.
+controls:
+  - Do not clone, vendor, or automatically install the Trace Labs list.
+  - Prefer Ubuntu 24.04 APT packages for automatic core installation.
+  - Do not install credentials, API keys, cookies, browser profiles, or browser extensions.
+  - Do not install offensive exploitation, persistence, credential theft, or malware tooling.
+  - Keep specialist tools optional until a separate installer option is designed and approved.
+stage_install:
+  apt_packages:
+    - ffmpeg
+    - translate-shell
+  already_provided_by_base_manifest:
+    - libimage-exiftool-perl
+  deferred_candidates:
+    - sherlock
+    - gowitness
+tools:
+  - id: ffmpeg
+    official_project_name: FFmpeg
+    official_source: https://packages.ubuntu.com/noble/ffmpeg
+    purpose: Transcode, inspect, and normalize multimedia evidence copies.
+    install_method: apt package ffmpeg from Ubuntu 24.04 noble universe
+    package_or_release_version_policy: Ubuntu noble package 7:6.1.1-3ubuntu5 with normal Ubuntu security and update channels
+    license: LGPL/GPL family; use Ubuntu package copyright file for exact compiled component terms
+    verification: Ubuntu APT repository metadata and package signature verification
+    maintenance_status: Maintained in Ubuntu noble; upstream FFmpeg remains active
+    ubuntu_24_04_amd64_compatibility: Ubuntu noble package is available for amd64
+    validation_command: ffmpeg -version
+    network_required_for_use: false
+    credentials_or_api_keys_required: false
+    data_handling_privacy_cautions: Avoid modifying original evidence; run against working copies and record derived outputs.
+    automatic_install: true
+  - id: exiftool
+    official_project_name: ExifTool
+    official_source: https://packages.ubuntu.com/noble/libimage-exiftool-perl
+    purpose: Read and write metadata from images, documents, and multimedia files.
+    install_method: Existing base apt package libimage-exiftool-perl; not duplicated in the OSINT stage
+    package_or_release_version_policy: Ubuntu noble package 12.76+dfsg-1 with normal Ubuntu security and update channels
+    license: Perl Artistic/GPL terms; use Ubuntu package copyright file for exact terms
+    verification: Ubuntu APT repository metadata and package signature verification
+    maintenance_status: Maintained in Ubuntu noble; upstream ExifTool remains active
+    ubuntu_24_04_amd64_compatibility: Architecture-independent Ubuntu noble package
+    validation_command: exiftool -ver
+    network_required_for_use: false
+    credentials_or_api_keys_required: false
+    data_handling_privacy_cautions: Metadata can contain precise location, device identifiers, authors, and timestamps.
+    automatic_install: false
+    automatic_install_reason: Already present in manifests/apt-packages.txt.
+  - id: translate-shell
+    official_project_name: Translate Shell
+    official_source: https://packages.ubuntu.com/noble/translate-shell
+    purpose: Command-line translation of text snippets through online translation engines.
+    install_method: apt package translate-shell from Ubuntu 24.04 noble universe
+    package_or_release_version_policy: Ubuntu noble package 0.9.7.1-2 with normal Ubuntu security and update channels
+    license: Unlicense
+    verification: Ubuntu APT repository metadata and package signature verification
+    maintenance_status: Packaged in Ubuntu noble; upstream activity should be reviewed before baseline changes
+    ubuntu_24_04_amd64_compatibility: Architecture-independent Ubuntu noble package
+    validation_command: trans -V
+    network_required_for_use: true
+    credentials_or_api_keys_required: false
+    data_handling_privacy_cautions: Translation queries are sent to third-party services; do not submit sensitive case text without approval.
+    automatic_install: true
+  - id: sherlock
+    official_project_name: Sherlock Project
+    official_source: https://github.com/sherlock-project/sherlock
+    purpose: Check usernames across public websites.
+    install_method: Deferred; upstream recommends pipx, pip, uv, or Docker for Ubuntu 24.04 because third-party Ubuntu packages may be broken
+    package_or_release_version_policy: Latest PyPI release 0.16.0 reviewed on 2026-06-26; requires hash-pinned dependency design before automatic installation
+    license: MIT
+    verification: Deferred; PyPI artifacts publish hashes, but dependency closure must be hash-pinned before installer use
+    maintenance_status: Upstream and PyPI release activity observed in 2025
+    ubuntu_24_04_amd64_compatibility: Python package supports Python 3.12, but automatic Ubuntu install path is deferred
+    validation_command: sherlock --version
+    network_required_for_use: true
+    credentials_or_api_keys_required: false
+    data_handling_privacy_cautions: High-volume username checks can disclose investigative interest and may trigger service rate limits or terms restrictions.
+    automatic_install: false
+    deferred_reason: Requires separate approved pipx or container supply-chain controls and privacy review.
+  - id: gowitness
+    official_project_name: gowitness
+    official_source: https://github.com/sensepost/gowitness
+    purpose: Capture screenshots and metadata from web pages for analyst review.
+    install_method: Deferred; upstream supports go install, release binaries, source builds, and Docker
+    package_or_release_version_policy: Latest GitHub release 3.1.1 reviewed on 2026-06-26; requires approved Go toolchain or binary checksum policy
+    license: GPL-3.0
+    verification: Deferred; Go module checksum database or release artifact verification must be designed before automatic installation
+    maintenance_status: Upstream release activity observed in 2025
+    ubuntu_24_04_amd64_compatibility: Linux amd64 releases exist; Chromium dependency already belongs to browser stage
+    validation_command: gowitness --version
+    network_required_for_use: true
+    credentials_or_api_keys_required: false
+    data_handling_privacy_cautions: Captures page content, headers, console output, and screenshots; use only for authorized targets.
+    automatic_install: false
+    deferred_reason: Requires separate approved supply-chain controls and usage guardrails before base installation.

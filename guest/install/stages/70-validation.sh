@@ -7,6 +7,8 @@ failures=0
 stage_root="${MTAW_STAGE_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd -P)}"
 apt_manifest="$stage_root/manifests/apt-packages.txt"
 python_manifest="$stage_root/manifests/python-requirements.in"
+osint_core_manifest="$stage_root/manifests/osint-core-tools.yaml"
+osint_bookmark_manifest="$stage_root/manifests/osint-bookmarks.yaml"
 installer_version=""
 
 check() {
@@ -135,6 +137,61 @@ report_browser_version() {
   report PASS "$description: $version"
 }
 
+report_command_version() {
+  local description="$1"
+  local command_name="$2"
+  local version_args="$3"
+  local command_path
+  local version
+
+  command_path="$(command -v "$command_name" 2>/dev/null)" || {
+    report FAIL "$description"
+    failures=$((failures + 1))
+    return
+  }
+  if ! version="$("$command_name" $version_args 2>&1 | head -n 1)" || [[ -z "$version" ]]; then
+    report FAIL "$description version unavailable at $command_path"
+    failures=$((failures + 1))
+    return
+  fi
+  report PASS "$description: $command_path; $version"
+}
+
+manifest_contains() {
+  local manifest_path="$1"
+  local pattern="$2"
+
+  [[ -f "$manifest_path" ]] && grep -Fq "$pattern" "$manifest_path"
+}
+
+no_specialist_osint_tools_installed() {
+  local command_name
+
+  for command_name in spiderfoot maltego phoneinfoga instaloader; do
+    if command -v "$command_name" >/dev/null 2>&1; then
+      return 1
+    fi
+  done
+}
+
+osint_files_have_no_embedded_credentials() {
+  local credential_pattern
+  local osint_files=(
+    "$stage_root/manifests/osint-core-tools.yaml"
+    "$stage_root/manifests/osint-specialist-tools.yaml"
+    "$stage_root/manifests/osint-bookmarks.yaml"
+    "$stage_root/docs/osint-tool-selection.md"
+    "$stage_root/docs/osint-tool-licensing.md"
+  )
+
+  credential_pattern="(pass"'word=|api[_-]?key=|to'"ken=|-----BEGIN ([A-Z ]+ )?PRIVATE KEY-----)"
+  ! grep -nEI -- "$credential_pattern" "${osint_files[@]}" >/dev/null
+}
+
+osint_stage_avoids_browser_profiles() {
+  ! grep -nEI -- '(mozilla/firefox|chromium/(Default|Profile)|google-chrome|Extensions|addons\.mozilla\.org|chrome\.google\.com/webstore)' "$stage_root/guest/install/stages/45-osint-core.sh" >/dev/null
+}
+
 launcher_references_venv() {
   grep -Fq '$HOME/.local/share/mtaw/venv' "$HOME/.local/bin/mtaw-shell"
 }
@@ -222,6 +279,19 @@ main() {
     report_browser_version "Chromium version" chromium-browser
   fi
 
+  check "OSINT core manifest present" test -f "$osint_core_manifest"
+  check "OSINT core manifest includes install policy" manifest_contains "$osint_core_manifest" "stage_install:"
+  check "OSINT core license records present" manifest_contains "$osint_core_manifest" "license:"
+  report_command_version "OSINT core command: ffmpeg" ffmpeg "-version"
+  report_command_version "OSINT core command: exiftool" exiftool "-ver"
+  report_command_version "OSINT core command: trans" trans "-V"
+  check "OSINT bookmark manifest present" test -f "$osint_bookmark_manifest"
+  check "OSINT bookmark manifest records account requirements" manifest_contains "$osint_bookmark_manifest" "account_required:"
+  check "OSINT bookmark manifest records service cautions" manifest_contains "$osint_bookmark_manifest" "cautions:"
+  check "OSINT files contain no embedded credentials" osint_files_have_no_embedded_credentials
+  check "OSINT stage avoids browser profile changes" osint_stage_avoids_browser_profiles
+  check "no specialist OSINT tools installed in base profile" no_specialist_osint_tools_installed
+
   for workspace_directory in cases evidence-register collection-logs notebooks; do
     check "workspace directory: $workspace_directory" test -d "$HOME/MTAW-Workspace/$workspace_directory"
   done
@@ -244,11 +314,13 @@ main() {
     report FAIL "installer version unavailable"
     failures=$((failures + 1))
   fi
-  for stage_name in 00-preflight 10-system-baseline 20-core-packages 30-python-environment 40-browsers 50-workspace-templates 60-security-defaults; do
+  for stage_name in 00-preflight 10-system-baseline 20-core-packages 30-python-environment 40-browsers 45-osint-core 50-workspace-templates 60-security-defaults; do
     check "stage state: $stage_name" stage_state_is_valid "$stage_name"
   done
   check_file_hash "apt manifest SHA-256" "$apt_manifest"
   check_file_hash "Python requirements SHA-256" "$python_manifest"
+  check_file_hash "OSINT core manifest SHA-256" "$osint_core_manifest"
+  check_file_hash "OSINT bookmark manifest SHA-256" "$osint_bookmark_manifest"
 
   check "block inventory before execution" test -s "$MTAW_REPORT_DIR/lsblk-before.txt"
   check "block inventory after execution" test -s "$MTAW_REPORT_DIR/lsblk-after.txt"

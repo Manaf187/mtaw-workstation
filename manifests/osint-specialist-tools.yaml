@@ -1,0 +1,44 @@
+schema_version: 1
+profile: osint-specialist
+status: documented_optional_not_installed
+last_reviewed_utc: 2026-06-26T00:00:00Z
+policy:
+  automatic_install: false
+  note: Specialist tools are documented for later explicit approval only.
+tools:
+  - id: spiderfoot
+    official_project_name: SpiderFoot
+    official_source: https://github.com/smicallef/spiderfoot
+    purpose: OSINT automation and correlation framework.
+    license: MIT
+    install_status: optional_deferred
+    deferred_reason: Large dependency footprint, web service behavior, and API-key-backed modules require a separate approved profile.
+    account_or_api_requirements: Many modules require API keys or service accounts.
+    privacy_cautions: Automated enrichment can disclose targets to third-party services.
+  - id: maltego
+    official_project_name: Maltego
+    official_source: https://www.maltego.com/
+    purpose: Link analysis and commercial OSINT investigation platform.
+    license: Commercial proprietary terms
+    install_status: optional_deferred
+    deferred_reason: Commercial licensing, account requirements, export/eligibility constraints, and transform marketplace dependencies.
+    account_or_api_requirements: Maltego ID and plan-specific access are required.
+    privacy_cautions: Transform queries may send case identifiers to Maltego or third-party providers.
+  - id: phoneinfoga
+    official_project_name: PhoneInfoga
+    official_source: https://github.com/sundowndev/phoneinfoga
+    purpose: Phone-number enrichment workflow.
+    license: GPL-3.0
+    install_status: optional_deferred
+    deferred_reason: Elevated privacy considerations and external scanner configuration requirements.
+    account_or_api_requirements: Some scanners require service configuration or third-party accounts.
+    privacy_cautions: Phone-number queries can expose sensitive personal-data investigative interest.
+  - id: instaloader
+    official_project_name: Instaloader
+    official_source: https://instaloader.github.io/
+    purpose: Download Instagram media and metadata.
+    license: MIT
+    install_status: optional_deferred
+    deferred_reason: Instagram terms, rate limits, account/session use, and personal-data handling require manual review.
+    account_or_api_requirements: Public use may be limited; authenticated use requires user-managed Instagram credentials outside this repository.
+    privacy_cautions: Can collect personal data, comments, geotags, and media metadata; do not store credentials in MTAW.

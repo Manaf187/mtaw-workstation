@@ -54,6 +54,18 @@ analyst_environment:
   jupyterlab: "4.x"
   primary_browser: Firefox
   compatibility_browser: Chromium
+  osint_core_profile:
+    status: implemented_repository_only
+    automatic_tools:
+      - ffmpeg
+      - translate-shell
+    validated_existing_base_tool:
+      - libimage-exiftool-perl
+    deferred_core_candidates:
+      - Sherlock
+      - GoWitness
+    specialist_profile: documented_optional_not_installed
+    bookmarks: source_data_only
   timestamps: UTC
   naming: ISO_8601_compatible
   case_evidence_storage: separate_encrypted_planned
@@ -72,6 +84,9 @@ implementation_status:
   repository_foundation: implemented
   guest_installer: implemented_untested
   workstation_package_installation: implemented_untested
+  osint_core_profile: implemented_repository_only
+  osint_specialist_profile: documented_optional_not_installed
+  osint_bookmark_catalogue: source_data_only
   virtualbox_automation: not_implemented
   appliance_build: not_implemented
   ova_export: not_implemented
