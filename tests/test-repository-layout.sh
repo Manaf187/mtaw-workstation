@@ -21,6 +21,7 @@ required_paths=(
   "docs/validation-strategy.md"
   "docs/validation-runs/2026-06-28-observed-guest-install.md"
   "docs/validation-runs/2026-06-28-clean-vm-reproducibility.md"
+  "docs/validation-runs/2026-06-28-guest-functional-smoke.md"
   "docs/release-model.md"
   "docs/first-boot-model.md"
   "docs/licensing-status.md"

@@ -2,7 +2,8 @@
 
 Most workstation validation described here is planned and not validated. One
 observed guest installer run and one reported clean-VM reproducibility
-observation are recorded under `docs/validation-runs/`.
+observation are recorded under `docs/validation-runs/`, along with one guest
+functional smoke test.
 
 The staged guest installer produces an observed-run report for development
 testing. That report is not by itself a compatibility, workstation,
@@ -20,9 +21,10 @@ compatibility, an appliance, or an OVA.
 
 The first reported clean-VM reproducibility observation confirms that the
 current automated guest installer path can complete on one clean Ubuntu
-24.04.4 amd64 VM. Planned OVA re-import testing will determine whether a
-future exported appliance can be imported and checked again. OVA re-import
-testing has not been performed.
+24.04.4 amd64 VM. The guest functional smoke test covers MTAW shell activation,
+selected Python imports, and JupyterLab loopback startup only. Planned OVA
+re-import testing will determine whether a future exported appliance can be
+imported and checked again. OVA re-import testing has not been performed.
 
 The guest installer records before and after `lsblk` inventories without
 selecting or changing an evidence disk. Inventory output does not establish
