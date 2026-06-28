@@ -1,6 +1,8 @@
 # Validation Strategy
 
-All workstation validation described here is planned and not validated.
+Most workstation validation described here is planned and not validated. One
+observed guest installer run is recorded in
+`docs/validation-runs/2026-06-28-observed-guest-install.md`.
 
 The staged guest installer produces an observed-run report for development
 testing. That report is not a clean-VM reproducibility, compatibility,

@@ -83,8 +83,8 @@ credential_exclusions:
 
 implementation_status:
   repository_foundation: implemented
-  guest_installer: implemented_untested
-  workstation_package_installation: implemented_untested
+  guest_installer: observed_guest_run_passed
+  workstation_package_installation: observed_guest_run_passed
   osint_core_profile: implemented_repository_only
   osint_specialist_profile: documented_optional_not_installed
   osint_bookmark_catalogue: source_data_only
@@ -96,6 +96,7 @@ implementation_status:
 
 validation_status:
   repository_static_checks: implemented_repository_only
+  observed_guest_installer_run: passed_2026-06-28
   clean_vm_reproducibility: not_tested
   ova_reimport: not_tested
   host_controls: not_validated
