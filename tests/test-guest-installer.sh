@@ -72,6 +72,25 @@ make_dispatcher_dry_run_fixture() {
   printf '%s' "$fixture_dir"
 }
 
+make_dispatcher_preflight_fixture() {
+  local fixture_dir
+  local command_name
+
+  fixture_dir="$(mktemp -d)"
+  mkdir -p "$fixture_dir/bin" "$fixture_dir/home" "$fixture_dir/report"
+  printf '%s\n' 'ID=ubuntu' 'VERSION_ID="24.04"' 'VERSION="Ubuntu 24.04.4 LTS"' >"$fixture_dir/os-release"
+
+  for command_name in sudo apt systemctl git; do
+    printf '%s\n' '#!/usr/bin/env bash' 'exit 0' >"$fixture_dir/bin/$command_name"
+    chmod +x "$fixture_dir/bin/$command_name"
+  done
+  printf '%s\n' '#!/usr/bin/env bash' 'printf "%s\\n" "NAME TYPE SIZE FSTYPE MOUNTPOINTS"' >"$fixture_dir/bin/lsblk"
+  printf '%s\n' '#!/usr/bin/env bash' '[[ "${1:-}" == hosts ]] && exit 0' 'exit 0' >"$fixture_dir/bin/getent"
+  chmod +x "$fixture_dir/bin/lsblk" "$fixture_dir/bin/getent"
+
+  printf '%s' "$fixture_dir"
+}
+
 test_dispatcher_dry_run_propagates_execution_context() {
   local fixture_dir
   local dry_run_output
@@ -87,6 +106,26 @@ test_dispatcher_dry_run_propagates_execution_context() {
   [[ ! -e "$fixture_dir/report/install.log" ]] || fail "dispatcher dry run wrote an install log"
   [[ ! -e "$fixture_dir/report/report.txt" ]] || fail "dispatcher dry run wrote a report file"
   [[ ! -d "$fixture_dir/report/stages" ]] || fail "dispatcher dry run wrote stage state"
+
+  # Remove only the temporary fixture created by this test.
+  rm -rf "$fixture_dir"
+}
+
+test_dispatcher_preflight_records_named_inventories() {
+  local fixture_dir
+  local preflight_output
+
+  fixture_dir="$(make_dispatcher_preflight_fixture)"
+  if ! preflight_output="$(MTAW_OS_RELEASE_FILE="$fixture_dir/os-release" MTAW_ARCH=amd64 HOME="$fixture_dir/home" PATH="$fixture_dir/bin:$PATH" bash "$root/guest/install/install.sh" --stage 00-preflight --report-dir "$fixture_dir/report" 2>&1)"; then
+    fail "dispatcher preflight should record named inventories without unbound variables"
+    grep -Fq 'unbound variable' <<<"$preflight_output" && fail "dispatcher preflight hit an unbound inventory argument"
+  else
+    grep -Fq 'completed stage: 00-preflight' <<<"$preflight_output" || fail "dispatcher preflight did not complete"
+  fi
+  [[ -s "$fixture_dir/report/lsblk-before.txt" ]] || fail "dispatcher preflight did not write before inventory"
+  [[ -s "$fixture_dir/report/lsblk-preflight.txt" ]] || fail "dispatcher preflight did not write preflight inventory"
+  [[ -s "$fixture_dir/report/lsblk-after.txt" ]] || fail "dispatcher preflight did not write after inventory"
+  [[ -s "$fixture_dir/report/stages/00-preflight.state" ]] || fail "dispatcher preflight did not write stage state"
 
   # Remove only the temporary fixture created by this test.
   rm -rf "$fixture_dir"
@@ -219,6 +258,7 @@ test_mandatory_validation_failure_fixture
 test_authentication_override_failure_fixture
 test_osint_core_missing_command_failure_fixture
 test_dispatcher_dry_run_propagates_execution_context
+test_dispatcher_preflight_records_named_inventories
 
 if [[ "$failures" -gt 0 ]]; then
   exit 1

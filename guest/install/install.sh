@@ -20,10 +20,10 @@ while [[ $# -gt 0 ]]; do
     *) printf 'ERROR: unknown option: %s\n' "$1" >&2; usage >&2; exit 2;;
   esac; shift
 done
-MTAW_LOG_FILE="$MTAW_REPORT_DIR/install.log"; MTAW_REPORT_FILE="$MTAW_REPORT_DIR/report.txt"
+MTAW_STAGE_ROOT="$root"; MTAW_STATE_DIR="$MTAW_REPORT_DIR/stages"; MTAW_LOG_FILE="$MTAW_REPORT_DIR/install.log"; MTAW_REPORT_FILE="$MTAW_REPORT_DIR/report.txt"
 init_reports
 report PASS "options dry_run=$MTAW_DRY_RUN stage=${stage_name:-all} from_stage=${from_stage:-none} allow_unsupported=$allow_unsupported"
-report PASS "block inventory before execution"; inventory
+report PASS "block inventory before execution"; inventory before
 
 start=0; end=$((${#MTAW_STAGES[@]} - 1))
 if [[ -n "$stage_name" ]]; then for i in "${!MTAW_STAGES[@]}"; do [[ "${MTAW_STAGES[$i]}" == "$stage_name" ]] && end=$i && break; done; [[ "${MTAW_STAGES[$end]}" == "$stage_name" ]] || { die "unknown stage: $stage_name"; exit 2; }; fi
@@ -44,4 +44,4 @@ for ((i=start; i<=end; i++)); do
   record_stage_success "$stage"
   report PASS "completed stage: $stage"
 done
-report 'NOT APPLICABLE' "automatic reboot is disabled"; report PASS "block inventory after execution"; inventory; report PASS "run ended"
+report 'NOT APPLICABLE' "automatic reboot is disabled"; report PASS "block inventory after execution"; inventory after; report PASS "run ended"
