@@ -8,10 +8,11 @@ M. Mohamed.
 ## Status
 
 Version `0.1.0-dev` is an unvalidated development baseline. The staged guest
-installer has one observed Ubuntu 24.04.4 amd64 development-VM run recorded in
-`docs/validation-runs/2026-06-28-observed-guest-install.md`. No MTAW
-workstation, OVA, release, checksum, compatibility result, clean-VM
-reproducibility result, or operational validation result exists at this stage.
+installer has one observed Ubuntu 24.04.4 amd64 development-VM run and one
+reported clean-VM reproducibility observation recorded under
+`docs/validation-runs/`. No MTAW workstation, OVA, release, checksum,
+compatibility result, host-control validation, or operational validation result
+exists at this stage.
 
 The repository includes a controlled OSINT core profile, optional specialist
 profile records, and a source-data bookmark catalogue. These records do not
@@ -36,8 +37,8 @@ Their observed-run report is not a workstation or appliance validation claim.
 
 For initial development-VM testing, see `guest/install/install.sh --help` and
 `docs/manual-build.md`. The staged installer is implemented repository
-functionality with one observed development-VM run; it still does not establish
-clean-VM reproducibility or workstation validation.
+functionality with one reported clean-VM reproducibility observation; it still
+does not establish workstation, host, appliance, or operational validation.
 
 ## Repository checks
 

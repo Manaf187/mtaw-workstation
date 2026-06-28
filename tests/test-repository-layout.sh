@@ -20,6 +20,7 @@ required_paths=(
   "docs/build-workflow.md"
   "docs/validation-strategy.md"
   "docs/validation-runs/2026-06-28-observed-guest-install.md"
+  "docs/validation-runs/2026-06-28-clean-vm-reproducibility.md"
   "docs/release-model.md"
   "docs/first-boot-model.md"
   "docs/licensing-status.md"

@@ -97,7 +97,7 @@ implementation_status:
 validation_status:
   repository_static_checks: implemented_repository_only
   observed_guest_installer_run: passed_2026-06-28
-  clean_vm_reproducibility: not_tested
+  clean_vm_reproducibility: observed_passed_2026-06-28
   ova_reimport: not_tested
   host_controls: not_validated
   workstation_functional_validation: not_validated

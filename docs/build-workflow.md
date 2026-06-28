@@ -1,8 +1,9 @@
 # Build Workflow
 
 The guest installer workflow is implemented repository functionality with one
-observed Ubuntu 24.04.4 amd64 development-VM run. That run does not establish
-compatibility, clean-VM reproducibility, workstation, or appliance validation.
+observed Ubuntu 24.04.4 amd64 development-VM run and one reported clean-VM
+reproducibility observation. Those runs do not establish compatibility,
+workstation, host-control, appliance, or operational validation.
 
 1. Start from a clean Ubuntu VM that matches the host and VM prerequisites.
 2. Run `bash guest/install/install.sh --dry-run`, then use the staged installer

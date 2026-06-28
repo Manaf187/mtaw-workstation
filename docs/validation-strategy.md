@@ -1,12 +1,12 @@
 # Validation Strategy
 
 Most workstation validation described here is planned and not validated. One
-observed guest installer run is recorded in
-`docs/validation-runs/2026-06-28-observed-guest-install.md`.
+observed guest installer run and one reported clean-VM reproducibility
+observation are recorded under `docs/validation-runs/`.
 
 The staged guest installer produces an observed-run report for development
-testing. That report is not a clean-VM reproducibility, compatibility,
-workstation, appliance, or OVA validation result.
+testing. That report is not by itself a compatibility, workstation,
+appliance, or OVA validation result.
 
 The final installer stage records guest-side observations as `PASS`, `FAIL`,
 `WARN`, `NOT TESTED`, and `NOT APPLICABLE`. A `PASS` identifies only the
@@ -18,10 +18,11 @@ run manually. GitHub Actions CI is not configured. Manual repository checks and
 the absence of CI do not validate workstation functionality, host
 compatibility, an appliance, or an OVA.
 
-Planned clean-VM reproducibility testing will determine whether the documented
-automated and manual paths produce a functionally suitable analyst environment.
-Planned OVA re-import testing will determine whether a future exported
-appliance can be imported and checked again. Neither test has been performed.
+The first reported clean-VM reproducibility observation confirms that the
+current automated guest installer path can complete on one clean Ubuntu
+24.04.4 amd64 VM. Planned OVA re-import testing will determine whether a
+future exported appliance can be imported and checked again. OVA re-import
+testing has not been performed.
 
 The guest installer records before and after `lsblk` inventories without
 selecting or changing an evidence disk. Inventory output does not establish
