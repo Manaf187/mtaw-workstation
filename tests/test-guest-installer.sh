@@ -211,6 +211,22 @@ test_osint_core_missing_command_failure_fixture() {
   rm -rf "$fixture_dir"
 }
 
+test_missing_chromium_is_deferred_warning() {
+  local fixture_dir
+  local validation_output
+
+  fixture_dir="$(make_validation_fixture)"
+  rm -f "$fixture_dir/bin/chromium"
+  if ! validation_output="$(run_validation_fixture "$fixture_dir" 2>&1)"; then
+    fail "validation stage should warn, not fail, when Chromium compatibility browser is deferred"
+  else
+    grep -Fq 'Chromium compatibility browser unavailable' <<<"$validation_output" || fail "missing Chromium did not produce the deferred compatibility-browser warning"
+  fi
+
+  # Remove only the temporary fixture created by this test.
+  rm -rf "$fixture_dir"
+}
+
 for stage in "${stages[@]}"; do
   [[ -f "$root/guest/install/stages/${stage}.sh" ]] || fail "missing stage: ${stage}"
 done
@@ -239,6 +255,9 @@ grep -Fq 'license:' "$root/manifests/osint-specialist-tools.yaml" || fail "OSINT
 if rg -n 'sudo[[:space:]]+DEBIAN_FRONTEND=' "$root/guest/install"; then fail "malformed privileged environment invocation"; fi
 if rg -n '^[^#]*sudo[[:space:]]' "$root/guest/install/stages"/{10,20,30,40,45,50,60,70}-*.sh; then fail "stage invokes sudo directly"; fi
 if rg -n 'curl[^\n|]*\|[[:space:]]*(bash|sh)' "$root/guest/install" "$root/docs"; then fail "installer or docs contain curl-pipe-shell pattern"; fi
+if rg -n 'apt-get install --yes chromium-browser|apt install --yes chromium-browser' "$root/guest/install/stages/40-browsers.sh"; then
+  fail "browser stage installs Chromium through the Ubuntu Snap transition package"
+fi
 
 if rg -n -i '\b(mkfs|fdisk|parted|cryptsetup|mount[[:space:]])\b' "$root/guest/install"; then
   fail "installer contains prohibited evidence-disk mutation command"
@@ -257,6 +276,7 @@ test_successful_validation_fixture
 test_mandatory_validation_failure_fixture
 test_authentication_override_failure_fixture
 test_osint_core_missing_command_failure_fixture
+test_missing_chromium_is_deferred_warning
 test_dispatcher_dry_run_propagates_execution_context
 test_dispatcher_preflight_records_named_inventories
 

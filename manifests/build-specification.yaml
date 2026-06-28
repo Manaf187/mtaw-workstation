@@ -54,6 +54,7 @@ analyst_environment:
   jupyterlab: "4.x"
   primary_browser: Firefox
   compatibility_browser: Chromium
+  compatibility_browser_installation: deferred_if_absent_to_avoid_automatic_snap_transition
   osint_core_profile:
     status: implemented_repository_only
     automatic_tools:

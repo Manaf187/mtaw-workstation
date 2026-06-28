@@ -30,6 +30,11 @@ The OSINT core stage installs only reviewed Ubuntu APT packages from
 `manifests/osint-core-tools.yaml`; it does not install specialist OSINT tools,
 browser extensions, credentials, or browser profile data.
 
+The browser stage records an existing Chromium-compatible browser when one is
+present. It does not install Ubuntu's `chromium-browser` Snap transition
+package automatically; a missing compatibility browser is reported as a
+deferred manual review item.
+
 The installer does not partition, format, mount, encrypt, or identify an
 evidence disk. It does not enable SSH, configure host integration, create
 backups, export an OVA, sign, publish, reboot automatically, or create a

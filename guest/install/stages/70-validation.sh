@@ -137,6 +137,22 @@ report_browser_version() {
   report PASS "$description: $version"
 }
 
+report_optional_browser_version() {
+  local description="$1"
+  local browser_command="$2"
+  local version
+
+  if ! command -v "$browser_command" >/dev/null 2>&1; then
+    report WARN "$description unavailable; compatibility browser deferred"
+    return
+  fi
+  if ! version="$("$browser_command" --version 2>/dev/null)" || [[ -z "$version" ]]; then
+    report WARN "$description version unavailable"
+    return
+  fi
+  report PASS "$description: $version"
+}
+
 report_command_version() {
   local description="$1"
   local command_name="$2"
@@ -274,9 +290,9 @@ main() {
 
   report_browser_version "Firefox version" firefox
   if command -v chromium >/dev/null 2>&1; then
-    report_browser_version "Chromium version" chromium
+    report_optional_browser_version "Chromium version" chromium
   else
-    report_browser_version "Chromium version" chromium-browser
+    report_optional_browser_version "Chromium compatibility browser" chromium-browser
   fi
 
   check "OSINT core manifest present" test -f "$osint_core_manifest"
