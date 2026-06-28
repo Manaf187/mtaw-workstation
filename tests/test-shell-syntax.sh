@@ -4,7 +4,7 @@ set -Eeuo pipefail
 readonly SCRIPT_NAME="$(basename "$0")"
 readonly REPOSITORY_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 
-mapfile -t shell_scripts < <(cd "$REPOSITORY_ROOT" && find guest tests -type f -name '*.sh' -print | sort)
+mapfile -t shell_scripts < <(cd "$REPOSITORY_ROOT" && { find guest tests -type f -name '*.sh' -print; printf '%s\n' setup-mtaw.sh; } | sort)
 
 failures=0
 

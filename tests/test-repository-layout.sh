@@ -12,6 +12,7 @@ required_paths=(
   "CHANGELOG.md"
   "CONTRIBUTING.md"
   "SECURITY.md"
+  "setup-mtaw.sh"
   ".editorconfig"
   ".gitattributes"
   ".gitignore"

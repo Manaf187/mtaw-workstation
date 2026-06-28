@@ -131,6 +131,47 @@ test_dispatcher_preflight_records_named_inventories() {
   rm -rf "$fixture_dir"
 }
 
+test_setup_wrapper_help_succeeds() {
+  local help_output
+
+  if ! help_output="$(bash "$root/setup-mtaw.sh" --help 2>&1)"; then
+    fail "setup wrapper --help should succeed"
+  else
+    grep -Fq 'Usage: setup-mtaw.sh' <<<"$help_output" || fail "setup wrapper help did not show wrapper usage"
+    grep -Fq 'guest/install/install.sh' <<<"$help_output" || fail "setup wrapper help did not identify the staged installer"
+  fi
+}
+
+test_setup_wrapper_dry_run_forwards_to_installer() {
+  local fixture_dir
+  local dry_run_output
+
+  fixture_dir="$(make_dispatcher_dry_run_fixture)"
+  if ! dry_run_output="$(MTAW_OS_RELEASE_FILE="$fixture_dir/os-release" MTAW_ARCH=amd64 HOME="$fixture_dir/home" PATH="$fixture_dir/bin:$PATH" bash "$root/setup-mtaw.sh" --dry-run --stage 00-preflight --report-dir "$fixture_dir/report" 2>&1)"; then
+    fail "setup wrapper dry run should reach existing installer"
+  else
+    grep -Fq 'options dry_run=1 stage=00-preflight' <<<"$dry_run_output" || fail "setup wrapper did not forward dry-run and stage arguments"
+    grep -Fq 'completed stage: 00-preflight' <<<"$dry_run_output" || fail "setup wrapper dry run did not complete preflight"
+  fi
+  [[ ! -e "$fixture_dir/report/install.log" ]] || fail "setup wrapper dry run wrote an install log"
+  [[ ! -e "$fixture_dir/report/report.txt" ]] || fail "setup wrapper dry run wrote a report file"
+  [[ ! -d "$fixture_dir/report/stages" ]] || fail "setup wrapper dry run wrote stage state"
+
+  # Remove only the temporary fixture created by this test.
+  rm -rf "$fixture_dir"
+}
+
+test_setup_wrapper_preserves_installer_exit_code() {
+  local wrapper_output
+
+  if wrapper_output="$(bash "$root/setup-mtaw.sh" --definitely-unknown 2>&1)"; then
+    fail "setup wrapper accepted an unknown option"
+  else
+    [[ "$?" -eq 2 ]] || fail "setup wrapper did not preserve installer exit code 2"
+    grep -Fq 'unknown option: --definitely-unknown' <<<"$wrapper_output" || fail "setup wrapper unknown option did not fail cleanly"
+  fi
+}
+
 test_successful_validation_fixture() {
   local fixture_dir
   local validation_output
@@ -244,6 +285,13 @@ grep -Fq 'compare_inventories' "$root/guest/install/lib/common.sh" || fail "miss
 grep -Fq 'MTAW_STAGES=(' "$root/guest/install/lib/common.sh" || fail "missing shared stage list"
 grep -Fq 'die()' "$root/guest/install/lib/common.sh" || fail "missing dispatcher error helper"
 grep -Fq 'mtaw-shell' "$root/guest/install/stages/30-python-environment.sh" || fail "missing functional shell launcher"
+grep -Fq 'guest/install/install.sh' "$root/setup-mtaw.sh" || fail "setup wrapper does not call the staged installer"
+if rg -n 'apt-get|apt[[:space:]]+install|pip[[:space:]]+install|python3.*venv|run_privileged|sudo[[:space:]]' "$root/setup-mtaw.sh"; then
+  fail "setup wrapper duplicates installation logic or invokes privileged commands directly"
+fi
+if rg -n 'curl[^\n|]*\|[[:space:]]*(bash|sh)' "$root/setup-mtaw.sh"; then
+  fail "setup wrapper contains curl-pipe-shell behavior"
+fi
 grep -Fq 'libimage-exiftool-perl' "$root/manifests/apt-packages.txt" || fail "incorrect ExifTool package"
 grep -Fq '45-osint-core' "$root/guest/install/lib/common.sh" || fail "missing OSINT core stage ordering"
 grep -Fq 'osint-core-tools.yaml' "$root/guest/install/stages/45-osint-core.sh" || fail "OSINT core stage does not use the core manifest"
@@ -279,6 +327,9 @@ test_osint_core_missing_command_failure_fixture
 test_missing_chromium_is_deferred_warning
 test_dispatcher_dry_run_propagates_execution_context
 test_dispatcher_preflight_records_named_inventories
+test_setup_wrapper_help_succeeds
+test_setup_wrapper_dry_run_forwards_to_installer
+test_setup_wrapper_preserves_installer_exit_code
 
 if [[ "$failures" -gt 0 ]]; then
   exit 1

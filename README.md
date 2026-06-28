@@ -19,6 +19,56 @@ The repository includes a controlled OSINT core profile, optional specialist
 profile records, and a source-data bookmark catalogue. These records do not
 claim that a workstation has been built or operationally validated.
 
+## Quick Start
+
+Run MTAW setup from inside an Ubuntu Desktop 24.04.4 LTS amd64 guest VM:
+
+```bash
+git clone <repository-url>
+cd mtaw-workstation
+bash setup-mtaw.sh --dry-run
+bash setup-mtaw.sh
+```
+
+The top-level `setup-mtaw.sh` command is the public entry point. It is a thin
+wrapper around the staged installer in `guest/install/install.sh`.
+
+### Prerequisites
+
+- Ubuntu Desktop 24.04.4 LTS amd64 guest VM.
+- Network access for Ubuntu package installation and Python package downloads.
+- A VM snapshot before the real installation, for rollback.
+- Authorization to make guest-side package and user-environment changes.
+
+### Setup Behavior
+
+- `bash setup-mtaw.sh --dry-run` reviews the planned staged run without writing
+  installer reports, state files, or system changes.
+- `bash setup-mtaw.sh` runs the real setup and prompts for confirmation before
+  privileged stages.
+- Reports and logs are written under `~/.local/state/mtaw/`.
+- Validation can be rerun with
+  `bash guest/install/install.sh --stage 70-validation --yes`.
+- No credentials, API keys, cookies, browser profiles, or case evidence are
+  included.
+- The evidence disk remains untouched.
+- Automatic reboot is disabled.
+- Rollback is through the VM snapshot taken before setup.
+
+### Release-Readiness Notes
+
+- `BLOCKER`: early installer argument failures could trigger report finalization
+  before report directories existed, masking the intended exit code. Fixed in
+  the closure pass.
+- `NON-BLOCKING`: Chromium remains deferred when absent to avoid Ubuntu's Snap
+  transition package path.
+- `NON-BLOCKING`: optional repository validators such as ShellCheck, yamllint,
+  markdownlint-cli2, and gitleaks may be unavailable locally and are reported
+  as `NOT TESTED`.
+- `DEFERRED`: host controls, evidence-disk encryption, backups, appliance
+  sanitization, OVA export/re-import, release checksums, signing, and
+  operational suitability remain outside this closure.
+
 ## Repository-first model
 
 This repository is the source of truth. It will eventually define how a clean

@@ -16,7 +16,7 @@ require_command() { command -v "$1" >/dev/null 2>&1 || { report FAIL "missing co
 init_reports() { [[ "$MTAW_DRY_RUN" == 1 ]] && return; mkdir -p "$MTAW_REPORT_DIR" "$MTAW_STATE_DIR"; : >"$MTAW_LOG_FILE"; : >"$MTAW_REPORT_FILE"; inventory before; }
 inventory() { [[ "$MTAW_DRY_RUN" == 1 ]] && return; lsblk --output NAME,TYPE,SIZE,FSTYPE,MOUNTPOINTS >"$MTAW_REPORT_DIR/lsblk-$1.txt" 2>&1; }
 compare_inventories() { [[ "$MTAW_DRY_RUN" == 1 ]] && return; if ! diff -u "$MTAW_REPORT_DIR/lsblk-before.txt" "$MTAW_REPORT_DIR/lsblk-after.txt" >/dev/null; then report WARN "block inventory changed; this does not prove forensic integrity"; fi; }
-finalize_run() { local code="$?"; [[ "$MTAW_DRY_RUN" == 1 ]] && return; inventory after; compare_inventories; report $([[ "$code" == 0 ]] && printf PASS || printf FAIL) "run ended stage=${MTAW_CURRENT_STAGE:-none} exit=$code reboot=NOT_APPLICABLE"; }
+finalize_run() { local code="$?"; [[ "$MTAW_DRY_RUN" == 1 || ! -d "$MTAW_REPORT_DIR" ]] && return "$code"; inventory after; compare_inventories; report $([[ "$code" == 0 ]] && printf PASS || printf FAIL) "run ended stage=${MTAW_CURRENT_STAGE:-none} exit=$code reboot=NOT_APPLICABLE"; return "$code"; }
 trap finalize_run EXIT
 run_command() { log "COMMAND: $*"; [[ "$MTAW_DRY_RUN" == 1 ]] && { log "DRY RUN: $*"; return 0; }; "$@" >>"$MTAW_LOG_FILE" 2>&1; }
 run_privileged() { [[ "$MTAW_DRY_RUN" == 1 ]] && { log "DRY RUN privileged: $*"; return 0; }; require_command sudo; run_command sudo "$@"; }
