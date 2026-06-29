@@ -35,6 +35,7 @@ operational suitability evidence.
 - Host controls are not validated by guest scripts.
 - Workstation functional suitability is not validated.
 - Appliance sanitization is not validated.
-- OVA export, signing, checksum publication, and re-import testing have not
-  been performed.
+- OVA export, signing, checksum publication, and re-import testing were not
+  performed as part of this clean-VM reproducibility observation. RC1 OVA
+  re-import acceptance was later recorded as author-reported PASS.
 - The evidence disk remains planned and was not configured by this run.

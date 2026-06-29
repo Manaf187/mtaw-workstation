@@ -22,9 +22,10 @@ compatibility, an appliance, or an OVA.
 The first reported clean-VM reproducibility observation confirms that the
 current automated guest installer path can complete on one clean Ubuntu
 24.04.4 amd64 VM. The guest functional smoke test covers MTAW shell activation,
-selected Python imports, and JupyterLab loopback startup only. Planned OVA
-re-import testing will determine whether a future exported appliance can be
-imported and checked again. OVA re-import testing has not been performed.
+selected Python imports, and JupyterLab loopback startup only. RC1 OVA
+re-import acceptance is recorded as author-reported PASS; this is not
+automated CI validation, third-party certification, production certification,
+or independently witnessed testing.
 
 The guest installer records before and after `lsblk` inventories without
 selecting or changing an evidence disk. Inventory output does not establish

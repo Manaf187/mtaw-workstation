@@ -1,8 +1,11 @@
 # MTAW v0.1.0-rc1 OVA Import Guide
 
 This guide covers manual VirtualBox import review for the controlled
-v0.1.0-rc1 release candidate. Acceptance status is `PENDING`; this guide does
-not claim that independent OVA re-import testing has passed.
+v0.1.0-rc1 release candidate. Acceptance status is author-reported PASS on
+VirtualBox `7.1.10r169112`. The project reference baseline remains VirtualBox
+`7.2`, and VirtualBox `7.2` compatibility testing is PENDING. This guide does
+not claim automated CI validation, third-party certification, production
+certification, or independently witnessed testing.
 
 ## Verify Checksum Before Import
 
@@ -83,12 +86,14 @@ lsblk --output NAME,TYPE,SIZE,FSTYPE,MOUNTPOINTS
 
 ## Acceptance Record
 
-- OVA checksum verified: PENDING
-- OVA import completed: PENDING
-- Isolation settings confirmed: PENDING
-- Guest boot verified: PENDING
-- MTAW shell verified: PENDING
-- Jupyter loopback verified: PENDING
-- Core tools verified: PENDING
-- Evidence disk state verified: PENDING
-- Acceptance decision: PENDING
+- OVA checksum verified: author-reported PASS
+- OVA import completed: author-reported PASS
+- Imported appliance boot: author-reported PASS
+- Release-candidate functional acceptance: author-reported PASS
+- Isolation settings confirmed: author-reported PASS
+- Guest boot verified: author-reported PASS
+- MTAW shell verified: author-reported PASS
+- Jupyter loopback verified: author-reported PASS
+- Core tools verified: author-reported PASS
+- Evidence disk state verified: author-reported PASS
+- Acceptance decision: controlled RC1 acceptance author-reported PASS

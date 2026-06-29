@@ -19,8 +19,14 @@ host_baseline:
 hypervisor_baseline:
   product: Oracle VirtualBox
   version: "7.2"
+  compatibility_testing: pending
   package: base_package
   extension_pack_required: false
+
+release_candidate_observed_hypervisor:
+  product: Oracle VirtualBox
+  version: 7.1.10r169112
+  scope: v0.1.0-rc1_build_and_author_reported_reimport_acceptance
 
 vm_hardware_profile:
   guest_os: Ubuntu Desktop 24.04.4 LTS amd64
@@ -102,7 +108,7 @@ validation_status:
   ova_export: completed_v0.1.0_rc1
   ova_sha256_generation: completed_v0.1.0_rc1
   ova_sha256_verification: completed_v0.1.0_rc1
-  ova_reimport: pending
+  ova_reimport: author_reported_pass_2026-06-29
   host_controls: not_validated
   workstation_functional_validation: not_validated
   appliance_sanitization: completed_v0.1.0_rc1

@@ -5,9 +5,18 @@ release_status: Release Candidate 1
 ubuntu_version: Ubuntu Desktop 24.04.4 LTS
 architecture: amd64
 repository_commit: fea24326bbae5d7904bddcb66b7fc4a64382d0b2
+reference_hypervisor:
+  product: Oracle VirtualBox
+  version: "7.2"
+  compatibility_testing_status: pending
+observed_hypervisor:
+  product: Oracle VirtualBox
+  version: 7.1.10r169112
+  scope: rc1_build_and_author_reported_reimport_acceptance
 ova:
   filename: MTAW-Workstation-v0.1.0-Ubuntu24.04-amd64.ova
   byte_size: 10006708736
+  observed_last_write_utc: 2026-06-29T16:57:07Z
   sha256:
     algorithm: SHA-256
     value: cfc52f7266c28ccf361bb78abc3978bb27601811e5abe84c4da8b1737747f08a
@@ -25,10 +34,13 @@ validation:
 ova_export_status: completed
 sha256_generation_status: completed
 sha256_verification_status: completed_successfully
-re_import_status: pending
+re_import_status: author_reported_pass
+imported_appliance_boot_status: author_reported_pass
+release_candidate_functional_acceptance: author_reported_pass
 credential_provisioning_status: pending
 public_distribution_status: not_approved
 timestamps:
+  ova_last_write_utc: 2026-06-29T16:57:07Z
   ova_export_utc: PENDING
   sha256_generated_utc: PENDING
   manifest_reviewed_utc: PENDING

@@ -39,5 +39,6 @@ started and served on loopback with token authentication.
 - Evidence-disk setup and encryption remain planned.
 - Backup configuration remains planned.
 - Appliance sanitization, OVA export, signing, checksum publication, and
-  re-import testing have not been performed.
+  re-import testing were not performed as part of this smoke test. RC1 OVA
+  re-import acceptance was later recorded as author-reported PASS.
 - Operational analyst suitability testing has not been performed.

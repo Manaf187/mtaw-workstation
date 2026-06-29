@@ -1,10 +1,10 @@
 release:
-  status: controlled_release_candidate
-  version: 0.1.0-rc1
-  source_commit: fea24326bbae5d7904bddcb66b7fc4a64382d0b2
-  ova: MTAW-Workstation-v0.1.0-Ubuntu24.04-amd64.ova
-  integrity_digest: sha256
-  publisher_authentication: not_implemented
-  clean_vm_reproducibility: observed_passed
-  ova_reimport: pending
-  sanitization: completed
+  status: example
+  version: REPLACE
+  source_commit: REPLACE
+  ova: REPLACE
+  integrity_digest: REPLACE
+  publisher_authentication: REPLACE
+  clean_vm_reproducibility: REPLACE
+  ova_reimport: REPLACE
+  sanitization: REPLACE

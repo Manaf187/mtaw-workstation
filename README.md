@@ -19,12 +19,15 @@ OVA is a derived artifact named
 `MTAW-Workstation-v0.1.0-Ubuntu24.04-amd64.ova` with size `10,006,708,736`
 bytes and SHA-256
 `cfc52f7266c28ccf361bb78abc3978bb27601811e5abe84c4da8b1737747f08a`.
+The RC1 build and author-reported re-import acceptance used VirtualBox
+`7.1.10r169112`; the project reference baseline remains VirtualBox `7.2`, and
+VirtualBox `7.2` compatibility testing is pending.
 
 This is not a final public appliance release. Independent OVA re-import
-acceptance, first-boot credential provisioning, public release approval,
-host-control validation, evidence-disk encryption, backup configuration,
-signing, long-term compatibility testing, and operational suitability
-certification remain pending.
+acceptance is author-reported PASS. First-boot credential provisioning, public
+release approval, host-control validation, evidence-disk encryption, backup
+configuration, signing, long-term compatibility testing, and operational
+suitability certification remain pending.
 
 The repository includes a controlled OSINT core profile, optional specialist
 profile records, and a source-data bookmark catalogue. These records do not

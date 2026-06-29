@@ -14,11 +14,18 @@
 - Recorded evidence disk state as unpartitioned, without a filesystem, and
   unmounted.
 - Recorded Guest Additions version `7.1.10r169112`.
+- Recorded VirtualBox host version used for the RC1 build and author-reported
+  re-import acceptance as `7.1.10r169112`; VirtualBox `7.2` compatibility
+  testing remains pending.
+- Recorded observed OVA last-write timestamp
+  `2026-06-29T16:57:07Z`.
 - Recorded OVA export, SHA-256 generation, and SHA-256 verification as
   completed.
-- This is a controlled release candidate. Independent OVA re-import
-  acceptance, first-boot credential provisioning, public release approval,
-  signing, host-control validation, and operational suitability remain pending.
+- Recorded OVA re-import acceptance, imported appliance boot, and
+  release-candidate functional acceptance as author-reported PASS.
+- This is a controlled release candidate. First-boot credential provisioning,
+  public release approval, signing, host-control validation, and operational
+  suitability remain pending.
 
 ## 0.1.0-dev — Unvalidated development baseline
 

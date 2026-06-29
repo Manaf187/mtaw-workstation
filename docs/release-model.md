@@ -14,6 +14,9 @@ recorded separately. A checksum alone can detect mismatch against a trusted
 reference but does not establish publisher authenticity.
 
 Release records distinguish functional reproducibility from byte-for-byte
-reproducibility. RC1 has an exported OVA and verified SHA-256 digest, but
-independent OVA re-import acceptance and first-boot credential provisioning
-remain pending.
+reproducibility. RC1 has an exported OVA and verified SHA-256 digest, and
+OVA re-import acceptance is author-reported PASS rather than automated CI,
+third-party certification, or production certification. RC1 was built and
+author-reported re-imported on VirtualBox `7.1.10r169112`. First-boot
+credential provisioning and compatibility with the project reference baseline
+VirtualBox `7.2` remain pending.

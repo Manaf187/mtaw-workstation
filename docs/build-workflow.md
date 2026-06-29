@@ -4,8 +4,8 @@ The guest installer workflow is implemented repository functionality with one
 observed Ubuntu 24.04.4 amd64 development-VM run, one reported clean-VM
 reproducibility observation, one guest functional smoke test, and one
 controlled RC1 OVA export record. Those records do not establish independent
-OVA re-import acceptance, full workstation, host-control, or operational
-validation.
+third-party certification, full workstation, host-control, or operational
+validation. RC1 OVA re-import acceptance is recorded as author-reported PASS.
 
 1. Start from a clean Ubuntu VM that matches the host and VM prerequisites.
 2. Run `bash guest/install/install.sh --dry-run`, then use the staged installer
