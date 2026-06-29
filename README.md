@@ -23,15 +23,20 @@ The RC1 build and author-reported re-import acceptance used VirtualBox
 `7.1.10r169112`; the project reference baseline remains VirtualBox `7.2`, and
 VirtualBox `7.2` compatibility testing is pending.
 
-This is not a final public appliance release. Independent OVA re-import
-acceptance is author-reported PASS. First-boot credential provisioning, public
-release approval, host-control validation, evidence-disk encryption, backup
-configuration, signing, long-term compatibility testing, and operational
-suitability certification remain pending.
+This is not a final public appliance release. OVA re-import acceptance is
+author-reported PASS, not automated CI validation, third-party certification,
+or production certification. First-boot credential provisioning, public release
+approval, external OVA download location, host-control validation,
+evidence-disk encryption, backup configuration, code signing, release signing,
+long-term compatibility testing, operational suitability certification, and
+VirtualBox `7.2` compatibility testing remain pending or outside the current
+RC1 validation scope.
 
 The repository includes a controlled OSINT core profile, optional specialist
-profile records, and a source-data bookmark catalogue. These records do not
-claim that a workstation has been built or operationally validated.
+profile records, and a source-data bookmark catalogue. These profile and
+catalogue records do not independently establish operational suitability,
+optional specialist-tool installation, or validation beyond the explicitly
+recorded RC1 evidence.
 
 ## Quick Start
 
@@ -79,9 +84,12 @@ wrapper around the staged installer in `guest/install/install.sh`.
 - `NON-BLOCKING`: optional repository validators such as ShellCheck, yamllint,
   markdownlint-cli2, and gitleaks may be unavailable locally and are reported
   as `NOT TESTED`.
-- `DEFERRED`: host controls, evidence-disk encryption, backups, appliance
-  sanitization, OVA export/re-import, release checksums, signing, and
-  operational suitability remain outside this closure.
+- `DEFERRED`: automated first-boot credential provisioning, public OVA
+  distribution approval, external OVA download location, host-control
+  certification, evidence-disk encryption, backup configuration, code signing,
+  release signing, long-term compatibility testing, operational suitability
+  certification, and VirtualBox `7.2` compatibility testing remain pending or
+  outside the current RC1 validation scope.
 
 ## Repository-first model
 
@@ -119,7 +127,7 @@ incomplete planned work.
 - `host/` — Windows and VirtualBox host-side requirements.
 - `guest/` — planned Ubuntu guest configuration and repository validation.
 - `templates/` — analyst-workflow template guidance, without case data.
-- `build/` — planned sanitization and release-evidence materials.
+- `build/` — sanitization and release-evidence materials.
 - `docs/` — architecture, security, validation, release, and decision records.
 
 See [architecture documentation](docs/architecture.md) and the
