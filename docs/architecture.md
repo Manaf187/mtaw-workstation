@@ -3,9 +3,9 @@
 ## Authoritative build model
 
 MTAW uses a repository-first architecture. Documentation, manifests, scripts,
-tests, and future validation evidence in this repository define the intended
-workstation. A future VirtualBox OVA is derived from a reviewed build and is
-not the source of truth.
+tests, and validation evidence in this repository define the intended
+workstation. A VirtualBox OVA is a derived artifact from a reviewed build and
+is not the source of truth.
 
 The planned delivery paths are automated installation, a documented manual
 build, and a prebuilt appliance. Each must trace back to the same baseline.
@@ -15,7 +15,7 @@ build, and a prebuilt appliance. Each must trace back to the same baseline.
 - `host/windows/` defines Windows and VirtualBox controls.
 - `guest/` defines Ubuntu guest-side configuration only.
 - `templates/` defines analyst-facing templates without case data.
-- `build/` defines planned sanitization and release evidence.
+- `build/` defines sanitization and release evidence.
 - `manifests/` defines machine-readable intended settings.
 
 Guest-side scripts cannot prove host settings such as Secure Boot, BitLocker,
@@ -30,8 +30,8 @@ configured report directory. Shared controls in `guest/install/lib/common.sh`
 keep dry runs non-modifying, gate privileged commands, and enforce the system
 baseline dependency for later stages. Stage 45 adds the controlled OSINT core
 profile after browsers and before workspace templates. Stage 70 reports
-guest-side observed state only; it cannot establish clean-VM reproducibility,
-host controls, or appliance suitability.
+guest-side observed state only; it cannot establish host controls, independent
+OVA re-import acceptance, or operational suitability.
 
 ## Storage model
 

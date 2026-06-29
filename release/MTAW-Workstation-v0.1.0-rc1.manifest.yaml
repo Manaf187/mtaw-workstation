@@ -1,0 +1,37 @@
+schema_version: 1
+product_name: Modern Threat Analyst Workstation
+release_version: 0.1.0-rc1
+release_status: Release Candidate 1
+ubuntu_version: Ubuntu Desktop 24.04.4 LTS
+architecture: amd64
+repository_commit: fea24326bbae5d7904bddcb66b7fc4a64382d0b2
+ova:
+  filename: MTAW-Workstation-v0.1.0-Ubuntu24.04-amd64.ova
+  byte_size: 10006708736
+  sha256:
+    algorithm: SHA-256
+    value: cfc52f7266c28ccf361bb78abc3978bb27601811e5abe84c4da8b1737747f08a
+guest_additions_version: 7.1.10r169112
+installer:
+  exit_status: 0
+  required_stages: passed
+validation:
+  stage_70: completed_successfully
+  mandatory_failures: none_observed
+  mandatory_warnings: none_observed
+  block_device_inventory: unchanged_during_installer_execution
+  evidence_disk: unpartitioned_no_filesystem_unmounted
+  scoped_mtaw_credential_check: passed
+ova_export_status: completed
+sha256_generation_status: completed
+sha256_verification_status: completed_successfully
+re_import_status: pending
+credential_provisioning_status: pending
+public_distribution_status: not_approved
+timestamps:
+  ova_export_utc: PENDING
+  sha256_generated_utc: PENDING
+  manifest_reviewed_utc: PENDING
+signing:
+  code_signing_status: pending
+  release_signing_status: pending

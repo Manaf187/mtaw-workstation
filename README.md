@@ -7,13 +7,24 @@ M. Mohamed.
 
 ## Status
 
-Version `0.1.0-dev` is an unvalidated development baseline. The staged guest
-installer has one observed Ubuntu 24.04.4 amd64 development-VM run and one
-reported clean-VM reproducibility observation recorded under
-`docs/validation-runs/`. A guest functional smoke test is also recorded there.
-No MTAW workstation, OVA, release, checksum, compatibility result,
-host-control validation, or operational validation result exists at this
-stage.
+Version `0.1.0-rc1` is a controlled Release Candidate 1 for the Modern Threat
+Analyst Workstation. It is derived from repository commit
+`fea24326bbae5d7904bddcb66b7fc4a64382d0b2` and targets Ubuntu Desktop
+24.04.4 LTS amd64.
+
+Completed RC1 evidence records a successful one-command setup workflow,
+successful real installation, successful Stage 70 validation, appliance
+sanitization, OVA export, SHA-256 generation, and SHA-256 verification. The
+OVA is a derived artifact named
+`MTAW-Workstation-v0.1.0-Ubuntu24.04-amd64.ova` with size `10,006,708,736`
+bytes and SHA-256
+`cfc52f7266c28ccf361bb78abc3978bb27601811e5abe84c4da8b1737747f08a`.
+
+This is not a final public appliance release. Independent OVA re-import
+acceptance, first-boot credential provisioning, public release approval,
+host-control validation, evidence-disk encryption, backup configuration,
+signing, long-term compatibility testing, and operational suitability
+certification remain pending.
 
 The repository includes a controlled OSINT core profile, optional specialist
 profile records, and a source-data bookmark catalogue. These records do not
@@ -71,10 +82,10 @@ wrapper around the staged installer in `guest/install/install.sh`.
 
 ## Repository-first model
 
-This repository is the source of truth. It will eventually define how a clean
-Ubuntu VM is configured, validated, sanitized, and exported. A future OVA is a
-derived delivery artifact; it is not the authoritative build definition and is
-not a substitute for reproducibility evidence.
+This repository is the source of truth. It defines how a clean Ubuntu VM is
+configured, validated, sanitized, and exported for RC1. The OVA is a derived
+delivery artifact; it is not the authoritative build definition and is not a
+substitute for reproducibility evidence.
 
 Three future paths are planned:
 

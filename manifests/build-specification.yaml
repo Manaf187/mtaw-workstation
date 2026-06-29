@@ -4,8 +4,8 @@ project:
   author: Manaf M. Mohamed
   purpose: Reproducible security-conscious Ubuntu analyst workstation
   repository_role: authoritative_source_of_truth
-  version: 0.1.0-dev
-  development_status: unvalidated_development_baseline
+  version: 0.1.0-rc1
+  development_status: controlled_release_candidate_1
 
 host_baseline:
   operating_system: Windows 11 Pro 64-bit
@@ -89,9 +89,9 @@ implementation_status:
   osint_specialist_profile: documented_optional_not_installed
   osint_bookmark_catalogue: source_data_only
   virtualbox_automation: not_implemented
-  appliance_build: not_implemented
-  ova_export: not_implemented
-  release_publishing: not_implemented
+  appliance_build: controlled_rc1_ova_exported
+  ova_export: completed_v0.1.0_rc1
+  release_publishing: not_approved
   signing: not_implemented
 
 validation_status:
@@ -99,7 +99,10 @@ validation_status:
   observed_guest_installer_run: passed_2026-06-28
   clean_vm_reproducibility: observed_passed_2026-06-28
   guest_functional_smoke_test: observed_passed_2026-06-28
-  ova_reimport: not_tested
+  ova_export: completed_v0.1.0_rc1
+  ova_sha256_generation: completed_v0.1.0_rc1
+  ova_sha256_verification: completed_v0.1.0_rc1
+  ova_reimport: pending
   host_controls: not_validated
   workstation_functional_validation: not_validated
-  appliance_sanitization: not_validated
+  appliance_sanitization: completed_v0.1.0_rc1
